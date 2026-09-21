@@ -1,0 +1,8 @@
+build/
+node_modules/
+*.tsbuildinfo
+*.tgz
+.DS_Store
+
+# Applied from registry/ — not a second source tree
+examples/api/modules/
