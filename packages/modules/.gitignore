@@ -1,4 +1,5 @@
 build/
-registry/
+# Bundled module tree (synced by scripts/sync-registry.ts). Do not ignore src/registry/.
+/registry/
 node_modules/
 *.tsbuildinfo

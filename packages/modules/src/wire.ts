@@ -94,10 +94,18 @@ function ensureErrorHandler(cwd: string, dryRun: boolean): string[] {
     }
     return ['start/kernel.ts (created)']
   }
-  let content = readFileSync(path, 'utf8')
-  if (content.includes('#modules/api/exception_handler')) return []
-  content += `\nserver.errorHandler(() => import('#modules/api/exception_handler'))\n`
-  if (!content.includes("from '@adonisjs/core/services/server'") && !content.includes('server.')) {
+  const original = readFileSync(path, 'utf8')
+  if (original.includes('#modules/api/exception_handler')) return []
+
+  // Decide before appending the errorHandler line — that line contains
+  // `server.` and would otherwise hide a missing import.
+  const needsServerImport =
+    !original.includes("from '@adonisjs/core/services/server'") &&
+    !original.includes('server.')
+
+  let content =
+    original + `\nserver.errorHandler(() => import('#modules/api/exception_handler'))\n`
+  if (needsServerImport) {
     content = `import server from '@adonisjs/core/services/server'\n${content}`
   }
   if (!dryRun) writeFileSync(path, content)

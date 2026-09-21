@@ -71,7 +71,10 @@ export async function runAdd(names: string[], flags: AddFlags): Promise<void> {
 
   const result = await installModules({ names: ordered, flags, config, registry })
   if (result.conflicts.length) {
-    console.error('\nConflicts (use --overwrite to replace):')
+    console.error(
+      '\nConflicts (use --overwrite to replace). Not recorded in adonia.json\n' +
+        'installed until all planned files for the module copy cleanly.'
+    )
     for (const c of result.conflicts) {
       console.error(`  ${describePlan(c, flags.cwd)}`)
     }
@@ -110,11 +113,11 @@ export async function installModules(opts: {
       }
     }
 
-    const { results, conflicts } = executePlan(plans, {
+    const { results, conflicts: moduleConflicts } = executePlan(plans, {
       overwrite: flags.overwrite,
       dryRun: flags.dryRun,
     })
-    allConflicts.push(...conflicts)
+    allConflicts.push(...moduleConflicts)
 
     for (const { plan, result } of results) {
       if (result === 'copied' || result === 'would-copy') {
@@ -160,19 +163,14 @@ export async function installModules(opts: {
       }
     }
 
-    if (!flags.dryRun && !config.installed.includes(name)) {
+    if (!flags.dryRun && moduleConflicts.length === 0 && !config.installed.includes(name)) {
       config = {
         ...config,
         installed: [...config.installed, name],
       }
-      writeHostConfig(flags.cwd, config)
-    } else if (!flags.dryRun && flags.overwrite && !config.installed.includes(name)) {
-      config = { ...config, installed: [...config.installed, name] }
-      writeHostConfig(flags.cwd, config)
     }
   }
 
-  // Ensure installed list written even when overwrite of already-installed
   if (!flags.dryRun) {
     writeHostConfig(flags.cwd, config)
   }

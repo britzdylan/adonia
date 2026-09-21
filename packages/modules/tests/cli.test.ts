@@ -117,6 +117,28 @@ describe('adonia CLI', () => {
     assert.ok(existsSync(join(host, 'config/modules.ts')))
   })
 
+  it('init --wire adds server import when kernel lacks it', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    writeFileSync(
+      join(host, 'start/kernel.ts'),
+      `import router from '@adonisjs/core/services/router'\n`
+    )
+    const r = run(['init', '--wire'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    const kernel = readFileSync(join(host, 'start/kernel.ts'), 'utf8')
+    assert.ok(
+      kernel.includes("from '@adonisjs/core/services/server'"),
+      'expected server import\n' + kernel
+    )
+    assert.ok(kernel.includes('#modules/api/exception_handler'))
+    assert.equal(
+      kernel.split("from '@adonisjs/core/services/server'").length - 1,
+      1,
+      'duplicate server import'
+    )
+  })
+
   it('add auth installs core, stubs, and config events', () => {
     host = mkdtempSync(join(tmpdir(), 'adonia-'))
     fakeAdonis(host)
@@ -144,6 +166,25 @@ describe('adonia CLI', () => {
     const r = run(['add', 'auth'], host)
     assert.equal(r.status, 0, r.stderr + r.stdout)
     assert.ok(readFileSync(service, 'utf8').includes('// local edit'))
+  })
+
+  it('add auth conflict does not mark installed', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    mkdirSync(join(host, 'app/models'), { recursive: true })
+    writeFileSync(join(host, 'app/models/user.ts'), '// host user stub\n')
+    const r = run(['add', 'auth'], host)
+    assert.equal(r.status, 1, r.stderr + r.stdout)
+    assert.ok(
+      /Not recorded in adonia\.json/i.test(r.stderr + r.stdout),
+      r.stderr + r.stdout
+    )
+    const installed = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8')).installed as string[]
+    assert.ok(!installed.includes('auth'), `installed=${installed.join(',')}`)
+    const retry = run(['add', 'auth'], host)
+    assert.equal(retry.status, 1, retry.stderr + retry.stdout)
+    assert.ok(!/Nothing to install/.test(retry.stdout + retry.stderr))
   })
 
   it('overwrite replaces edited files', () => {
@@ -198,6 +239,51 @@ describe('adonia CLI', () => {
     assert.ok(!existsSync(join(host, 'app/models/password_reset.ts')))
     const check = run(['check'], host)
     assert.equal(check.status, 1, check.stdout + check.stderr)
+  })
+
+  it('check fails when installed misses registryDependencies', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    run(['init', '--wire'], host)
+    run(['add', 'auth', '--skip-stubs'], host)
+    const cfgPath = join(host, 'adonia.json')
+    const cfg = JSON.parse(readFileSync(cfgPath, 'utf8'))
+    cfg.installed = ['auth']
+    writeFileSync(cfgPath, `${JSON.stringify(cfg, null, 2)}\n`)
+    const check = run(['check'], host)
+    assert.equal(check.status, 1, check.stdout + check.stderr)
+    const out = check.stdout + check.stderr
+    assert.ok(/requires "api"/i.test(out), out)
+  })
+
+  it('github: registry fails closed without bundled fallback', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    writeFileSync(
+      join(host, 'adonia.json'),
+      JSON.stringify(
+        {
+          registry: 'github:acme/mods/registry',
+          ref: 'main',
+          paths: {
+            modules: 'modules',
+            models: 'app/models',
+            migrations: 'database/migrations',
+            controllers: 'app/controllers',
+            validators: 'app/validators',
+          },
+          aliases: { modules: '#modules', constants: '#constants', models: '#models' },
+          installed: [],
+        },
+        null,
+        2
+      ) + '\n'
+    )
+    const r = run(['list'], host, [])
+    assert.notEqual(r.status, 0, r.stderr + r.stdout)
+    const out = r.stdout + r.stderr
+    assert.ok(/not supported/i.test(out), out)
+    assert.ok(!existsSync(join(host, 'modules/api')))
   })
 
   it('reads legacy modules.json', () => {
