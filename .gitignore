@@ -1,8 +1,19 @@
-build/
 node_modules/
+.turbo/
+dist/
+build/
 *.tsbuildinfo
 *.tgz
 .DS_Store
+*.sqlite*
+.tmp/
 
-# Applied from registry/ — not a second source tree
-examples/api/modules/
+# Package registry is generated via sync-registry from the fixture
+packages/modules/registry/
+packages/modules/build/
+
+# Adonis fixture local state
+apps/adonis-api-stater/node_modules/
+apps/adonis-api-stater/tmp/
+apps/adonis-api-stater/build/
+apps/adonis-api-stater/.env

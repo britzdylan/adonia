@@ -15,10 +15,9 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm test
-      - name: Example apply + typecheck
+      - run: npm run sync-registry
+      - run: npm test -w adonia
+      - name: Fixture typecheck
         run: |
-          npm run build
-          npm ci --prefix examples/api
-          npm run apply-to-example
-          npm run typecheck --prefix examples/api
+          npm ci --prefix apps/adonis-api-stater || npm install --prefix apps/adonis-api-stater
+          npm run typecheck --prefix apps/adonis-api-stater

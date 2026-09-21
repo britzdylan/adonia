@@ -11,6 +11,9 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/modules
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,8 +22,13 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: npm
       - run: npm ci
-      - run: npm test
+        working-directory: .
+      - run: npm run sync-registry -w adonia
+        working-directory: .
+      - run: npm test -w adonia
+        working-directory: .
       - run: npm publish --access public --provenance
+        working-directory: packages/modules
       - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:

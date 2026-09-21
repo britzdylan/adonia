@@ -1,9 +1,8 @@
 {
-  "name": "adonia",
+  "name": "adonia-monorepo",
   "version": "0.1.0",
-  "private": false,
-  "type": "module",
-  "description": "Adonia modules for AdonisJS \u2014 CLI and bundled registry",
+  "private": true,
+  "description": "Adonia — AdonisJS module library (CLI + fixture app)",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -13,38 +12,26 @@
     "url": "https://github.com/britzdylan/adonia/issues"
   },
   "homepage": "https://github.com/britzdylan/adonia#readme",
-  "bin": {
-    "adonia": "./build/cli.js"
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "sync-registry": "npm run sync-registry -w adonia"
   },
-  "exports": {
-    ".": "./build/cli.js",
-    "./schema/adonia.schema.json": "./schema/adonia.schema.json"
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "turbo": "^2.7.4",
+    "typescript": "5.9.3"
   },
-  "files": [
-    "build",
-    "schema",
-    "registry"
-  ],
   "engines": {
     "node": ">=20"
   },
-  "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "check-types": "tsc --noEmit",
-    "prepack": "npm run build",
-    "test": "npm run build && node --import tsx --test tests/*.test.ts",
-    "apply-to-example": "node --import tsx scripts/apply-to-example.ts",
-    "adonia": "node build/cli.js"
-  },
-  "dependencies": {
-    "commander": "^13.1.0",
-    "fast-glob": "^3.3.3",
-    "zod": "^3.24.2"
-  },
-  "devDependencies": {
-    "@types/node": "^22.13.10",
-    "tsx": "^4.19.3",
-    "typescript": "^5.9.2"
-  }
+  "packageManager": "npm@11.6.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

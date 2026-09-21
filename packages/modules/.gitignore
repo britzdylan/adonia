@@ -1,0 +1,4 @@
+build/
+registry/
+node_modules/
+*.tsbuildinfo

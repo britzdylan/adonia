@@ -1,0 +1,51 @@
+{
+  "name": "adonia",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "Adonia modules for AdonisJS \u2014 CLI and bundled registry",
+  "bin": {
+    "adonia": "./build/cli.js"
+  },
+  "exports": {
+    ".": "./build/cli.js",
+    "./schema/adonia.schema.json": "./schema/adonia.schema.json"
+  },
+  "files": [
+    "build",
+    "schema",
+    "registry"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit",
+    "sync-registry": "node --import tsx scripts/sync-registry.ts",
+    "prepack": "npm run sync-registry && npm run build",
+    "test": "npm run sync-registry && npm run build && node --import tsx --test tests/*.test.ts",
+    "adonia": "node build/cli.js"
+  },
+  "dependencies": {
+    "commander": "^13.1.0",
+    "fast-glob": "^3.3.3",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.9.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/britzdylan/adonia.git",
+    "directory": "packages/modules"
+  },
+  "homepage": "https://github.com/britzdylan/adonia#readme",
+  "bugs": {
+    "url": "https://github.com/britzdylan/adonia/issues"
+  },
+  "license": "MIT"
+}

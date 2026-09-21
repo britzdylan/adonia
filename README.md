@@ -1,57 +1,43 @@
 # Adonia
 
-Adonia is a shadcn-style module library for any AdonisJS 7 API. The CLI
-and registry ship together on npm.
+Turborepo for the Adonia CLI (`packages/modules`, npm name `adonia`) and
+the AdonisJS 7 fixture app (`apps/adonis-api-stater`).
 
-**Repo:** https://github.com/britzdylan/adonia  
-**npm:** `adonia`
+**GitHub:** https://github.com/britzdylan/adonia
 
-```bash
-npm init adonisjs@latest my-api -- --kit api
-cd my-api
-npx adonia@latest init --wire
-npx adonia@latest add auth
-node ace migration:run
+## Layout
+
+```text
+adonia/
+  packages/modules/          # npm package "adonia" (CLI + bundled registry)
+  apps/adonis-api-stater/    # authoring fixture (module sources live here)
 ```
 
-## Commands
+Author modules under `apps/adonis-api-stater/modules/`, then:
 
-| Command | Role |
-|---------|------|
-| `init` | Write `adonia.json`, copy API core |
-| `init --wire` | Also patch aliases, provider, exception handler, `config/modules.ts` |
-| `list` | Available vs `installed` |
-| `add [names…]` | Resolve deps, copy files/stubs, merge config |
-| `diff [name]` | Unified diff host vs registry (exit 1 if dirty) |
-| `check` | Validate folders, peerModels, aliases, events |
+```bash
+npm run sync-registry   # copies fixture modules → packages/modules/registry/
+npm test -w adonia
+```
 
-Shared flags: `--yes`, `--dry-run`, `--cwd <dir>`, `--registry <dir>`, `--overwrite`.
+## Host install (published package)
 
-## `adonia.json`
+```bash
+npx adonia@latest init --wire
+npx adonia@latest add auth
+```
 
-Default registry is `"bundled"` (the `registry/` folder inside this
-package). Schema: `schema/adonia.schema.json`.
-
-## Developing Adonia
-
-`registry/` is the source of truth for module sources. The example app
-at `examples/api` is filled by applying the CLI — do not maintain a
-second copy of modules there.
+## Monorepo development
 
 ```bash
 npm install
-npm test
-
-# after editing registry/auth/…
 npm run build
-npm run apply-to-example
-cd examples/api && npm run typecheck
-```
+npm test -w adonia
 
-Optional flag for one-off applies:
-
-```bash
-node build/cli.js add auth --cwd examples/api --registry registry --overwrite --yes
+# exercise CLI against the fixture tree
+node packages/modules/build/cli.js add auth \
+  --cwd /tmp/some-host \
+  --registry apps/adonis-api-stater/modules
 ```
 
 ## License
