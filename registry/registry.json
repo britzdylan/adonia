@@ -1,0 +1,4 @@
+{
+  "core": ["api", "types", "constants", "contracts", "adapters"],
+  "modules": ["auth", "account", "notification", "creem", "subscription"]
+}

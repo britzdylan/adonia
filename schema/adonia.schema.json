@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://adonia.dev/schemas/adonia.schema.json",
+  "title": "Adonia host adonia.json",
+  "type": "object",
+  "required": ["registry", "ref", "paths", "aliases", "installed"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "registry": { "type": "string" },
+    "ref": { "type": "string" },
+    "paths": {
+      "type": "object",
+      "required": ["modules", "models", "migrations", "controllers", "validators"],
+      "properties": {
+        "modules": { "type": "string" },
+        "models": { "type": "string" },
+        "migrations": { "type": "string" },
+        "controllers": { "type": "string" },
+        "validators": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "aliases": {
+      "type": "object",
+      "required": ["modules", "constants", "models"],
+      "properties": {
+        "modules": { "type": "string" },
+        "constants": { "type": "string" },
+        "models": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "installed": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

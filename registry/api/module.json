@@ -1,0 +1,28 @@
+{
+  "name": "api",
+  "description": "Shared ApiService, envelopes, exception handler, and HttpContext.respond provider",
+  "files": [
+    "service.ts",
+    "envelope.ts",
+    "exception.ts",
+    "exception_handler.ts",
+    "provider.ts",
+    "module.json"
+  ],
+  "stubs": [],
+  "dependencies": {},
+  "registryDependencies": [
+    "types",
+    "constants",
+    "contracts",
+    "adapters"
+  ],
+  "peerModels": [],
+  "configKeys": [],
+  "env": [],
+  "events": [],
+  "hostFacingExceptions": [],
+  "hostTests": [
+    "tests/integration/"
+  ]
+}

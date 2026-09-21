@@ -1,0 +1,31 @@
+{
+  "name": "subscription",
+  "description": "Subscription state synced from Creem webhooks",
+  "files": [
+    "service.ts",
+    "events.ts",
+    "options.ts",
+    "contracts/**",
+    "adapters/**",
+    "module.json"
+  ],
+  "stubs": [
+    "stubs/models/subscription.ts",
+    "stubs/migrations/*.ts"
+  ],
+  "dependencies": {},
+  "registryDependencies": ["api", "creem"],
+  "peerModels": ["#models/subscription"],
+  "configKeys": ["modules.subscription"],
+  "env": [],
+  "events": [
+    "Subscription:Activated",
+    "Subscription:Revoked",
+    "Subscription:Canceled",
+    "Subscription:ScheduledCancel",
+    "Subscription:Updated",
+    "Subscription:RefundCreated"
+  ],
+  "hostFacingExceptions": [],
+  "hostTests": ["tests/integration/lucid_adapters.spec.ts"]
+}

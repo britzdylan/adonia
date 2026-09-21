@@ -1,0 +1,23 @@
+{
+  "name": "notification",
+  "description": "Multi-channel notification dispatcher with host-supplied registry",
+  "files": [
+    "service.ts",
+    "options.ts",
+    "contracts/**",
+    "adapters/**",
+    "module.json"
+  ],
+  "stubs": [
+    "stubs/models/app_notification.ts",
+    "stubs/migrations/*.ts"
+  ],
+  "dependencies": {},
+  "registryDependencies": ["api"],
+  "peerModels": ["#models/app_notification"],
+  "configKeys": [],
+  "env": [],
+  "events": [],
+  "hostFacingExceptions": [],
+  "hostTests": []
+}
