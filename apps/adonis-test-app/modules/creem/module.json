@@ -1,0 +1,27 @@
+{
+  "name": "creem",
+  "description": "Creem checkout, portal, invoices, and webhook verification",
+  "files": [
+    "service.ts",
+    "events.ts",
+    "contracts/**",
+    "adapters/**",
+    "module.json"
+  ],
+  "stubs": [],
+  "dependencies": {
+    "creem_io": "^1.0.0"
+  },
+  "registryDependencies": ["api"],
+  "peerModels": [],
+  "configKeys": ["modules.creem"],
+  "env": [
+    "CREEM_API_KEY",
+    "CREEM_WEBHOOK_SECRET",
+    "CREEM_TEST_MODE",
+    "CREEM_SUCCESS_URL"
+  ],
+  "events": ["Creem:CheckoutCreated", "Creem:PortalLinkCreated"],
+  "hostFacingExceptions": [],
+  "hostTests": []
+}

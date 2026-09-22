@@ -74,6 +74,7 @@
     "@vinejs/vine": "^4.4.0",
     "adonia": "file:../../packages/modules/adonia-0.1.0.tgz",
     "better-sqlite3": "^13.0.3",
+    "creem_io": "^1.0.0",
     "luxon": "^3.7.2",
     "reflect-metadata": "^0.2.2"
   },
