@@ -18,6 +18,16 @@ const modulesConfig: Record<string, { description: string; emits: string[] }> = 
     'Auth:Logout',
     ],
   },
+  account: {
+    description: "Authenticated profile, email change, password change, account deletion",
+    emits: [
+    'Account:UpdateUserProfile',
+    'Account:UpdateUserEmail',
+    'Account:ConfirmEmailChange',
+    'Account:UpdateUserPassword',
+    'Account:DeleteAccount',
+    ],
+  },
 }
 
 export default modulesConfig

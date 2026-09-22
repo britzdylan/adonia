@@ -21,6 +21,7 @@
     "adapters",
     "api",
     "creem",
-    "auth"
+    "auth",
+    "account"
   ]
 }

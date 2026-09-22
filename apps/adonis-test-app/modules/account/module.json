@@ -1,0 +1,30 @@
+{
+  "name": "account",
+  "description": "Authenticated profile, email change, password change, account deletion",
+  "files": [
+    "service.ts",
+    "events.ts",
+    "options.ts",
+    "contracts/**",
+    "adapters/**",
+    "module.json"
+  ],
+  "stubs": [
+    "stubs/controllers/account_controller.ts",
+    "stubs/validators/account.ts"
+  ],
+  "dependencies": {},
+  "registryDependencies": ["api", "auth"],
+  "peerModels": ["#models/user"],
+  "configKeys": ["modules.account"],
+  "env": ["APP_KEY"],
+  "events": [
+    "Account:UpdateUserProfile",
+    "Account:UpdateUserEmail",
+    "Account:ConfirmEmailChange",
+    "Account:UpdateUserPassword",
+    "Account:DeleteAccount"
+  ],
+  "hostFacingExceptions": ["PAYLOAD_TOO_LARGE"],
+  "hostTests": ["tests/integration/lucid_adapters.spec.ts"]
+}
