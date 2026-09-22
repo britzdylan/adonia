@@ -1,0 +1,42 @@
+{
+  "name": "auth",
+  "description": "Email registration, login, verification, password reset",
+  "files": [
+    "service.ts",
+    "events.ts",
+    "options.ts",
+    "contracts/**",
+    "adapters/**",
+    "module.json"
+  ],
+  "stubs": [
+    "stubs/models/user.ts",
+    "stubs/models/password_reset.ts",
+    "stubs/migrations/*.ts",
+    "stubs/controllers/auth_controller.ts",
+    "stubs/validators/auth.ts"
+  ],
+  "dependencies": {},
+  "registryDependencies": ["api"],
+  "peerModels": ["#models/user", "#models/password_reset"],
+  "configKeys": ["modules.auth"],
+  "env": ["APP_KEY"],
+  "events": [
+    "Auth:RegisterUser",
+    "Auth:CreateNewVerificationToken",
+    "Auth:ActivateUserAccount",
+    "Auth:RequestPasswordReset",
+    "Auth:ResetPassword",
+    "Auth:Login",
+    "Auth:Logout"
+  ],
+  "hostFacingExceptions": [
+    "INVALID_CREDENTIALS",
+    "UNAUTHENTICATED",
+    "SESSION_EXPIRED",
+    "FORBIDDEN",
+    "TOO_MANY_ATTEMPTS",
+    "TOO_MANY_REQUESTS"
+  ],
+  "hostTests": ["tests/integration/lucid_adapters.spec.ts"]
+}
