@@ -12,19 +12,25 @@ import {
   type Registry,
 } from '../registry/index.js'
 import {
+  anyAppStubsSelected,
   describePlan,
   executePlan,
+  hostRouteFile,
+  manifestHasRouteStubs,
   planModuleFiles,
   planStubs,
   planTests,
+  resolveStubSelect,
   type PlannedCopy,
+  type StubSelect,
 } from '../registry/plan.js'
 import type { HostModulesConfig } from '../schema.js'
-import type { SharedFlags } from '../types.js'
+import type { ScaffoldFlags, SharedFlags } from '../types.js'
+import { wireModuleRoute } from '../wire.js'
 
-export interface AddFlags extends SharedFlags {
-  skipStubs?: boolean
-  withTests?: boolean
+export interface AddFlags extends SharedFlags, ScaffoldFlags {
+  /** Hide the post-install next-steps footer (used by init core). */
+  suppressNextSteps?: boolean
 }
 
 export async function runAdd(names: string[], flags: AddFlags): Promise<void> {
@@ -43,12 +49,19 @@ export async function runAdd(names: string[], flags: AddFlags): Promise<void> {
     return
   }
 
-  const registry = await resolveRegistry({
-    registryFlag: flags.registry,
-    hostRegistry: config.registry,
-    ref: config.ref,
-    cwd: flags.cwd,
-  })
+  let registry: Registry
+  try {
+    registry = await resolveRegistry({
+      registryFlag: flags.registry,
+      hostRegistry: config.registry,
+      ref: config.ref,
+      cwd: flags.cwd,
+    })
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : err)
+    process.exitCode = 1
+    return
+  }
 
   let ordered: string[]
   try {
@@ -80,6 +93,10 @@ export async function runAdd(names: string[], flags: AddFlags): Promise<void> {
     }
     process.exitCode = 1
   }
+  if (result.wireErrors.length) {
+    for (const e of result.wireErrors) console.error(e)
+    process.exitCode = 1
+  }
 }
 
 export async function installModules(opts: {
@@ -87,12 +104,15 @@ export async function installModules(opts: {
   flags: AddFlags
   config: HostModulesConfig
   registry: Registry
-}): Promise<{ conflicts: PlannedCopy[] }> {
+}): Promise<{ conflicts: PlannedCopy[]; wireErrors: string[] }> {
   const { names, flags, registry } = opts
   let config = opts.config
   const allConflicts: PlannedCopy[] = []
+  const wireErrors: string[] = []
   const warnings: string[] = []
   const npmDeps = new Map<string, string>()
+  const stubSelect = resolveStubSelect(flags)
+  const requestedNames = new Set(names)
 
   for (const name of names) {
     const manifest = loadManifest(registry, name)
@@ -100,8 +120,8 @@ export async function installModules(opts: {
 
     plans.push(...planModuleFiles(registry, name, manifest, config, flags.cwd))
 
-    if (!flags.skipStubs) {
-      plans.push(...planStubs(registry, name, manifest, config, flags.cwd, warnings))
+    if (stubSelect) {
+      plans.push(...planStubs(registry, name, manifest, config, flags.cwd, warnings, stubSelect))
     }
     if (flags.withTests) {
       plans.push(...planTests(registry, name, config, flags.cwd))
@@ -139,7 +159,11 @@ export async function installModules(opts: {
     }
 
     // Merge config/modules.ts for feature modules with events
-    if (manifest.events.length && name !== 'api' && !(['types', 'constants', 'contracts', 'adapters'] as string[]).includes(name)) {
+    if (
+      manifest.events.length &&
+      name !== 'api' &&
+      !(['types', 'constants', 'contracts', 'adapters'] as string[]).includes(name)
+    ) {
       const configPath = join(flags.cwd, 'config/modules.ts')
       const merged = mergeModulesConfig(
         configPath,
@@ -160,6 +184,29 @@ export async function installModules(opts: {
       const missing = missingEnvKeys(flags.cwd, manifest.env)
       if (missing.length) {
         console.log(`Missing env keys for ${name} (not written): ${missing.join(', ')}`)
+      }
+    }
+
+    if (flags.wireRoutes && manifestHasRouteStubs(manifest)) {
+      const routeDest = hostRouteFile(flags.cwd, name)
+      const plannedRoute = plans.some((p) => p.dest === routeDest)
+      const haveRoute = existsSync(routeDest) || plannedRoute
+      if (!haveRoute) {
+        wireErrors.push(
+          `Cannot --wire-routes for "${name}": missing start/routes/${name}.ts. ` +
+            `Pass --with-routes first, or create the file.`
+        )
+      } else if (flags.dryRun && !existsSync(routeDest)) {
+        console.log(`Would wire routes: start/routes.ts → ./routes/${name}.js`)
+      } else {
+        const wired = wireModuleRoute(flags.cwd, name, flags.dryRun)
+        if (!wired.ok) {
+          wireErrors.push(wired.error)
+        } else if (wired.actions.length) {
+          console.log(
+            `${flags.dryRun ? 'Would wire' : 'Wired'} routes: ${wired.actions.join(', ')}`
+          )
+        }
       }
     }
 
@@ -185,12 +232,29 @@ export async function installModules(opts: {
     if (w) console.warn(w)
   }
 
-  console.log('\nNext steps (not run by the CLI):')
-  console.log('  1. Register routes for new controllers')
-  console.log('  2. Run migrations: node ace migration:run')
-  console.log('  3. Listen for module events as needed')
+  printNextSteps(flags, stubSelect, [...requestedNames][0] ?? 'auth')
 
-  return { conflicts: allConflicts }
+  return { conflicts: allConflicts, wireErrors }
+}
+
+function printNextSteps(
+  flags: AddFlags,
+  stubSelect: StubSelect | null,
+  exampleName: string
+): void {
+  if (flags.suppressNextSteps) return
+  console.log('\nNext steps (not run by the CLI):')
+  if (!anyAppStubsSelected(stubSelect) && !stubSelect?.routes) {
+    console.log('Models/migrations/controllers/validators/routes were not copied.')
+    console.log(`  adonia add ${exampleName} --with-stubs`)
+    console.log(`  adonia add ${exampleName} --with-routes --wire-routes`)
+  } else {
+    if (stubSelect?.routes && !flags.wireRoutes) {
+      console.log(`  adonia add ${exampleName} --wire-routes  # mount start/routes/${exampleName}.ts`)
+    }
+    console.log('  1. Run migrations: node ace migration:run')
+    console.log('  2. Listen for module events as needed')
+  }
 }
 
 function missingEnvKeys(cwd: string, keys: string[]): string[] {

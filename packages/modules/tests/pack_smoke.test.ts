@@ -79,9 +79,11 @@ describe('adonia pack smoke', () => {
     assert.equal(cfg.registry, 'bundled')
     assert.ok(!/formwire/i.test(JSON.stringify(cfg)))
 
-    const add = spawnSync(process.execPath, [adoniaBin, 'add', 'auth', '--yes', '--cwd', host], {
-      encoding: 'utf8',
-    })
+    const add = spawnSync(
+      process.execPath,
+      [adoniaBin, 'add', 'auth', '--with-stubs', '--yes', '--cwd', host],
+      { encoding: 'utf8' }
+    )
     assert.equal(add.status, 0, add.stderr + add.stdout)
 
     assert.ok(existsSync(join(host, 'modules/auth/service.ts')))

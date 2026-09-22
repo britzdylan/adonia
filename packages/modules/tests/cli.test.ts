@@ -40,6 +40,7 @@ function fakeAdonis(dir: string): void {
         imports: {
           '#controllers/*': './app/controllers/*.js',
           '#models/*': './app/models/*.js',
+          '#start/*': './start/*.js',
         },
       },
       null,
@@ -53,6 +54,7 @@ function fakeAdonis(dir: string): void {
   mkdirSync(join(dir, 'app'), { recursive: true })
   mkdirSync(join(dir, 'start'), { recursive: true })
   writeFileSync(join(dir, 'start/kernel.ts'), `import server from '@adonisjs/core/services/server'\n`)
+  writeFileSync(join(dir, 'start/routes.ts'), `import router from '@adonisjs/core/services/router'\n`)
   mkdirSync(join(dir, 'config'), { recursive: true })
 }
 
@@ -80,7 +82,6 @@ describe('adonia CLI', () => {
     assert.equal(r.status, 0)
     assert.ok(r.stdout.includes('Adonia'))
     assert.ok(r.stdout.includes('adonia'))
-    // Ignore absolute paths (workshop checkout may contain the string)
     const productText = r.stdout
       .split('\n')
       .filter((line) => !line.includes('/') && !line.includes('\\'))
@@ -139,20 +140,54 @@ describe('adonia CLI', () => {
     )
   })
 
-  it('add auth installs core, stubs, and config events', () => {
+  it('add auth installs module files without stubs by default', () => {
     host = mkdtempSync(join(tmpdir(), 'adonia-'))
     fakeAdonis(host)
     assert.equal(run(['init', '--wire'], host).status, 0)
     const r = run(['add', 'auth'], host)
     assert.equal(r.status, 0, r.stderr + r.stdout)
     assert.ok(existsSync(join(host, 'modules/auth/service.ts')))
-    assert.ok(existsSync(join(host, 'app/models/user.ts')))
-    assert.ok(existsSync(join(host, 'app/models/password_reset.ts')))
+    assert.ok(!existsSync(join(host, 'app/models/user.ts')))
+    assert.ok(!existsSync(join(host, 'start/routes/auth.ts')))
     const modulesConfig = readFileSync(join(host, 'config/modules.ts'), 'utf8')
     assert.ok(modulesConfig.includes('Auth:Login'))
     const installed = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8')).installed
     assert.ok(installed.includes('auth'))
     assert.ok(installed.includes('api'))
+    const out = r.stdout + r.stderr
+    assert.ok(/--with-stubs/.test(out), out)
+  })
+
+  it('add auth --with-stubs copies models and controllers', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const r = run(['add', 'auth', '--with-stubs'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    assert.ok(existsSync(join(host, 'app/models/user.ts')))
+    assert.ok(existsSync(join(host, 'app/models/password_reset.ts')))
+    assert.ok(existsSync(join(host, 'app/controllers/auth_controller.ts')))
+    assert.ok(!existsSync(join(host, 'start/routes/auth.ts')))
+  })
+
+  it('add auth --with-routes --wire-routes mounts route file', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const r = run(['add', 'auth', '--with-routes', '--wire-routes'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    assert.ok(existsSync(join(host, 'start/routes/auth.ts')))
+    const routes = readFileSync(join(host, 'start/routes.ts'), 'utf8')
+    assert.ok(routes.includes("./routes/auth.js"), routes)
+  })
+
+  it('wire-routes without route file exits 1', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const r = run(['add', 'auth', '--wire-routes'], host)
+    assert.equal(r.status, 1, r.stderr + r.stdout)
+    assert.ok(/missing start\/routes\/auth\.ts/i.test(r.stderr + r.stdout))
   })
 
   it('add auth second time is a no-op without --overwrite', () => {
@@ -174,7 +209,7 @@ describe('adonia CLI', () => {
     assert.equal(run(['init', '--wire'], host).status, 0)
     mkdirSync(join(host, 'app/models'), { recursive: true })
     writeFileSync(join(host, 'app/models/user.ts'), '// host user stub\n')
-    const r = run(['add', 'auth'], host)
+    const r = run(['add', 'auth', '--with-models'], host)
     assert.equal(r.status, 1, r.stderr + r.stdout)
     assert.ok(
       /Not recorded in adonia\.json/i.test(r.stderr + r.stdout),
@@ -182,7 +217,7 @@ describe('adonia CLI', () => {
     )
     const installed = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8')).installed as string[]
     assert.ok(!installed.includes('auth'), `installed=${installed.join(',')}`)
-    const retry = run(['add', 'auth'], host)
+    const retry = run(['add', 'auth', '--with-models'], host)
     assert.equal(retry.status, 1, retry.stderr + retry.stdout)
     assert.ok(!/Nothing to install/.test(retry.stdout + retry.stderr))
   })
@@ -226,15 +261,11 @@ describe('adonia CLI', () => {
     assert.equal(run(['diff', 'auth'], host).status, 1)
   })
 
-  it('check fails when peer model missing after skip-stubs', () => {
+  it('check fails when peer model missing after plain add', () => {
     host = mkdtempSync(join(tmpdir(), 'adonia-'))
     fakeAdonis(host)
     run(['init', '--wire'], host)
-    const r = spawnSync(
-      process.execPath,
-      [cli, '--yes', '--cwd', host, '--registry', fixture, 'add', 'auth', '--skip-stubs'],
-      { encoding: 'utf8' }
-    )
+    const r = run(['add', 'auth'], host)
     assert.equal(r.status, 0, r.stderr + r.stdout)
     assert.ok(!existsSync(join(host, 'app/models/password_reset.ts')))
     const check = run(['check'], host)
@@ -245,7 +276,7 @@ describe('adonia CLI', () => {
     host = mkdtempSync(join(tmpdir(), 'adonia-'))
     fakeAdonis(host)
     run(['init', '--wire'], host)
-    run(['add', 'auth', '--skip-stubs'], host)
+    run(['add', 'auth'], host)
     const cfgPath = join(host, 'adonia.json')
     const cfg = JSON.parse(readFileSync(cfgPath, 'utf8'))
     cfg.installed = ['auth']
@@ -254,6 +285,24 @@ describe('adonia CLI', () => {
     assert.equal(check.status, 1, check.stdout + check.stderr)
     const out = check.stdout + check.stderr
     assert.ok(/requires "api"/i.test(out), out)
+  })
+
+  it('init --scaffold installs feature modules with stubs and routes', () => {
+    host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    const r = run(['init', '--scaffold'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    assert.ok(/implies --wire/i.test(r.stdout + r.stderr))
+    const installed = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8')).installed as string[]
+    assert.ok(installed.includes('auth'))
+    assert.ok(installed.includes('account'))
+    assert.ok(installed.includes('subscription'))
+    assert.ok(existsSync(join(host, 'app/models/user.ts')))
+    assert.ok(existsSync(join(host, 'start/routes/auth.ts')))
+    assert.ok(existsSync(join(host, 'start/routes/account.ts')))
+    const routes = readFileSync(join(host, 'start/routes.ts'), 'utf8')
+    assert.ok(routes.includes("./routes/auth.js"), routes)
+    assert.ok(routes.includes("./routes/account.js"), routes)
   })
 
   it('github: registry fails closed without bundled fallback', () => {

@@ -2,11 +2,14 @@ import { existsSync, readFileSync } from 'node:fs'
 import { relative } from 'node:path'
 import { loadHostConfig } from '../host.js'
 import { loadManifest, resolveRegistry } from '../registry/index.js'
-import { planModuleFiles, planStubs } from '../registry/plan.js'
+import { planModuleFiles, planStubs, resolveStubSelect } from '../registry/plan.js'
 import { sha256 } from '../copy.js'
-import type { SharedFlags } from '../types.js'
+import type { ScaffoldFlags, SharedFlags } from '../types.js'
 
-export async function runDiff(name: string | undefined, flags: SharedFlags): Promise<void> {
+export async function runDiff(
+  name: string | undefined,
+  flags: SharedFlags & ScaffoldFlags
+): Promise<void> {
   if (!name) {
     console.error('Usage: adonia diff <name>')
     process.exitCode = 1
@@ -31,9 +34,12 @@ export async function runDiff(name: string | undefined, flags: SharedFlags): Pro
 
   const manifest = loadManifest(registry, name)
   const warnings: string[] = []
+  const stubSelect = resolveStubSelect(flags)
   const plans = [
     ...planModuleFiles(registry, name, manifest, config, flags.cwd),
-    ...planStubs(registry, name, manifest, config, flags.cwd, warnings),
+    ...(stubSelect
+      ? planStubs(registry, name, manifest, config, flags.cwd, warnings, stubSelect)
+      : []),
   ]
 
   let differed = false

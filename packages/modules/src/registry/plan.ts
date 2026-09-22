@@ -12,11 +12,53 @@ export interface PlannedCopy {
   kind: 'file' | 'stub' | 'test'
 }
 
-const STUB_FOLDER_TO_PATH_KEY: Record<string, keyof HostModulesConfig['paths']> = {
+/** App stub folders selected by CLI flags. Routes are never included in `--with-stubs`. */
+export type StubFolder = 'models' | 'migrations' | 'controllers' | 'validators' | 'routes'
+
+export interface StubSelect {
+  models: boolean
+  migrations: boolean
+  controllers: boolean
+  validators: boolean
+  routes: boolean
+}
+
+const APP_STUB_FOLDERS: StubFolder[] = ['models', 'migrations', 'controllers', 'validators']
+
+const STUB_FOLDER_TO_PATH_KEY: Record<
+  Exclude<StubFolder, 'routes'>,
+  keyof HostModulesConfig['paths']
+> = {
   models: 'models',
   migrations: 'migrations',
   controllers: 'controllers',
   validators: 'validators',
+}
+
+export const DEFAULT_ROUTES_DIR = 'start/routes'
+
+export function resolveStubSelect(flags: {
+  withStubs?: boolean
+  withModels?: boolean
+  withMigrations?: boolean
+  withControllers?: boolean
+  withValidators?: boolean
+  withRoutes?: boolean
+}): StubSelect | null {
+  const select: StubSelect = {
+    models: Boolean(flags.withStubs || flags.withModels),
+    migrations: Boolean(flags.withStubs || flags.withMigrations),
+    controllers: Boolean(flags.withStubs || flags.withControllers),
+    validators: Boolean(flags.withStubs || flags.withValidators),
+    routes: Boolean(flags.withRoutes),
+  }
+  if (!APP_STUB_FOLDERS.some((f) => select[f]) && !select.routes) return null
+  return select
+}
+
+export function anyAppStubsSelected(select: StubSelect | null): boolean {
+  if (!select) return false
+  return APP_STUB_FOLDERS.some((f) => select[f])
 }
 
 export function planModuleFiles(
@@ -47,7 +89,8 @@ export function planStubs(
   manifest: ModuleManifest,
   host: HostModulesConfig,
   cwd: string,
-  warnings: string[]
+  warnings: string[],
+  select: StubSelect
 ): PlannedCopy[] {
   const root = moduleDir(registry, name)
   const plans: PlannedCopy[] = []
@@ -61,8 +104,19 @@ export function planStubs(
       warnings.push(`Skipping stub with no folder: ${rel}`)
       continue
     }
-    const folder = without.slice(0, slash)
+    const folder = without.slice(0, slash) as StubFolder
     const rest = without.slice(slash + 1)
+    if (!select[folder]) continue
+
+    if (folder === 'routes') {
+      plans.push({
+        src: join(root, rel),
+        dest: join(cwd, DEFAULT_ROUTES_DIR, rest),
+        kind: 'stub',
+      })
+      continue
+    }
+
     const pathKey = STUB_FOLDER_TO_PATH_KEY[folder]
     if (!pathKey) {
       warnings.push(`Unknown stub folder "${folder}" (${rel}); skipped`)
@@ -76,6 +130,14 @@ export function planStubs(
     })
   }
   return plans
+}
+
+export function manifestHasRouteStubs(manifest: ModuleManifest): boolean {
+  return manifest.stubs.some((s) => /(^|\/)stubs\/routes(\/|$)/.test(s) || s.includes('stubs/routes'))
+}
+
+export function hostRouteFile(cwd: string, moduleName: string): string {
+  return join(cwd, DEFAULT_ROUTES_DIR, `${moduleName}.ts`)
 }
 
 export function planTests(

@@ -11,7 +11,8 @@
   ],
   "stubs": [
     "stubs/controllers/account_controller.ts",
-    "stubs/validators/account.ts"
+    "stubs/validators/account.ts",
+    "stubs/routes/account.ts"
   ],
   "dependencies": {},
   "registryDependencies": ["api", "auth"],

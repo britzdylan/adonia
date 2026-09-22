@@ -141,3 +141,48 @@ function ensureModulesConfig(cwd: string, dryRun: boolean): string[] {
 }
 
 export { REQUIRED_IMPORTS, EMPTY_MODULES_CONFIG }
+
+/**
+ * Append a side-effect import of `start/routes/<module>.ts` into
+ * `start/routes.ts`. Idempotent. Does not create the module route file.
+ */
+export function wireModuleRoute(
+  cwd: string,
+  moduleName: string,
+  dryRun = false
+): { ok: true; actions: string[] } | { ok: false; error: string } {
+  const routeFile = join(cwd, 'start/routes', `${moduleName}.ts`)
+  if (!existsSync(routeFile)) {
+    return {
+      ok: false,
+      error:
+        `Cannot --wire-routes for "${moduleName}": missing start/routes/${moduleName}.ts. ` +
+        `Pass --with-routes first, or create the file.`,
+    }
+  }
+
+  const routesPath = join(cwd, 'start/routes.ts')
+  const importRelative = `./routes/${moduleName}.js`
+  const importLine = `import '${importRelative}'`
+
+  let content = existsSync(routesPath) ? readFileSync(routesPath, 'utf8') : ''
+  if (
+    content.includes(`'${importRelative}'`) ||
+    content.includes(`"${importRelative}"`) ||
+    content.includes(`'#start/routes/${moduleName}'`) ||
+    content.includes(`"#start/routes/${moduleName}"`)
+  ) {
+    return { ok: true, actions: [] }
+  }
+
+  content = content.length ? `${content.trimEnd()}\n${importLine}\n` : `${importLine}\n`
+  if (!dryRun) {
+    mkdirSync(dirname(routesPath), { recursive: true })
+    writeFileSync(routesPath, content)
+  }
+  return {
+    ok: true,
+    actions: [`start/routes.ts → ${importRelative}`],
+  }
+}
+

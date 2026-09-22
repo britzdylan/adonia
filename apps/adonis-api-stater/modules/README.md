@@ -7,6 +7,10 @@ inside a fixture Adonis app used to design and test slices. Hosts do
 ```bash
 npx adonia@latest init --wire
 npx adonia@latest add auth
+npx adonia@latest add auth --with-stubs
+npx adonia@latest add auth --with-routes --wire-routes
+# or full kit:
+npx adonia@latest init --scaffold
 ```
 
 Local authors iterating on a module can point the CLI at this tree:
@@ -38,7 +42,9 @@ Public names are listed in `registry.json`.
 Each feature module (and `api`) ships a manifest:
 
 - **files** — domain slice copy set (relative to the module folder).
-- **stubs** — host files to copy into `app/` / `database/`.
+- **stubs** — host files under `stubs/` (`models`, `migrations`,
+  `controllers`, `validators`, `routes`). Opt-in via CLI `--with-*`
+  flags; plain `add` does not copy them.
 - **dependencies** — npm packages this module imports.
 - **registryDependencies** — other modules that must already be present.
 - **peerModels** — `#models/*` aliases Lucid adapters expect.
@@ -58,7 +64,8 @@ Prefer `npx adonia`. If installing by hand:
    when using Lucid).
 3. Register `#modules/api/provider` and `#modules/api/exception_handler`.
 4. Copy feature modules in `registryDependencies` order.
-5. Copy each module's `stubs/` into `app/` and `database/`.
+5. Optionally copy stubs (`--with-stubs` / `--with-routes`) into `app/`,
+   `database/`, and `start/routes/`.
 6. Fill `config/modules.ts` from each module's `events` list.
 7. Optional: replace Lucid adapters with host adapters; delete `adapters/`
    after copy if unused.
