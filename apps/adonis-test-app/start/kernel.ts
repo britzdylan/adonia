@@ -47,3 +47,5 @@ router.use([
 export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
 })
+
+server.errorHandler(() => import('#modules/api/exception_handler'))
