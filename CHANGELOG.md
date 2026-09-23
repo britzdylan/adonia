@@ -9,12 +9,15 @@
   granular `--with-models` / `--with-migrations` / `--with-controllers` /
   `--with-validators` flags.
 - Removed `--skip-stubs` (no longer needed; stubs are opt-in).
+- Lucid / SDK adapters are no longer in the default module copy or the
+  `api` core set. Use `--with-adapters` (also implied by `--with-stubs`
+  and `--with-controllers`). Destination is `app/adapters/`.
 
 ### Added
 
 - Opt-in scaffolding: `--with-stubs`, `--with-models`,
   `--with-migrations`, `--with-controllers`, `--with-validators`,
-  `--with-routes`, `--wire-routes`.
+  `--with-adapters`, `--with-routes`, `--wire-routes`.
 - Route stubs under `stubs/routes/` for `auth` and `account`; copied to
   `start/routes/<name>.ts` and optionally mounted via `--wire-routes`.
 - `adonia init --scaffold` installs every registry feature module with

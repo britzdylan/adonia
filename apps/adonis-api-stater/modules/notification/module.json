@@ -10,7 +10,8 @@
   ],
   "stubs": [
     "stubs/models/app_notification.ts",
-    "stubs/migrations/*.ts"
+    "stubs/migrations/*.ts",
+    "stubs/adapters/**/*"
   ],
   "dependencies": {},
   "registryDependencies": ["api"],

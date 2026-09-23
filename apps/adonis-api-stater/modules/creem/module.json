@@ -5,10 +5,11 @@
     "service.ts",
     "events.ts",
     "contracts/**",
-    "adapters/**",
     "module.json"
   ],
-  "stubs": [],
+  "stubs": [
+    "stubs/adapters/**/*"
+  ],
   "dependencies": {
     "creem_io": "^1.0.0"
   },

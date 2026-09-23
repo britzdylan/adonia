@@ -4,7 +4,7 @@ import type {
   PasswordResetStore,
   TokenDuration,
 } from '#modules/auth/contracts/index'
-import type { MemoryUserStore } from '#modules/adapters/tests/memory_user_store'
+import type { MemoryUserStore } from './memory_user_store.ts'
 
 /**
  * In-memory PasswordResetStore. createForUser deletes prior rows for the user.

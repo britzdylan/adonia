@@ -11,7 +11,7 @@ import {
   createAuthService,
   LucidAccessTokenSession,
   LucidUserStore,
-} from '#modules/auth/adapters/index'
+} from '#adapters/auth'
 import { responseCodes } from '#constants/responseCodes'
 import {
   loginValidator,

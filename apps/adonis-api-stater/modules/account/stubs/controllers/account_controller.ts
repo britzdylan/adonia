@@ -3,7 +3,7 @@
  * Requires an authenticated user on ctx.auth.
  */
 import type { HttpContext } from '@adonisjs/core/http'
-import { createAccountService } from '#modules/account/adapters/index'
+import { createAccountService } from '#adapters/account'
 import { responseCodes } from '#constants/responseCodes'
 import {
   updateProfileValidator,

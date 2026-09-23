@@ -162,7 +162,7 @@ export async function installModules(opts: {
     if (
       manifest.events.length &&
       name !== 'api' &&
-      !(['types', 'constants', 'contracts', 'adapters'] as string[]).includes(name)
+      !(['types', 'constants', 'contracts'] as string[]).includes(name)
     ) {
       const configPath = join(flags.cwd, 'config/modules.ts')
       const merged = mergeModulesConfig(
@@ -245,8 +245,9 @@ function printNextSteps(
   if (flags.suppressNextSteps) return
   console.log('\nNext steps (not run by the CLI):')
   if (!anyAppStubsSelected(stubSelect) && !stubSelect?.routes) {
-    console.log('Models/migrations/controllers/validators/routes were not copied.')
+    console.log('Models/migrations/controllers/validators/adapters/routes were not copied.')
     console.log(`  adonia add ${exampleName} --with-stubs`)
+    console.log(`  adonia add ${exampleName} --with-adapters`)
     console.log(`  adonia add ${exampleName} --with-routes --wire-routes`)
   } else {
     if (stubSelect?.routes && !flags.wireRoutes) {

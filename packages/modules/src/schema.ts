@@ -49,7 +49,7 @@ export const registryIndexSchema = z.object({
 
 export type RegistryIndex = z.infer<typeof registryIndexSchema>
 
-export const CORE_PACKAGES = ['types', 'constants', 'contracts', 'adapters'] as const
+export const CORE_PACKAGES = ['types', 'constants', 'contracts'] as const
 
 export function impliedCoreManifest(name: (typeof CORE_PACKAGES)[number]): ModuleManifest {
   return moduleManifestSchema.parse({

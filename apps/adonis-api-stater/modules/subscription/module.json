@@ -6,12 +6,12 @@
     "events.ts",
     "options.ts",
     "contracts/**",
-    "adapters/**",
     "module.json"
   ],
   "stubs": [
     "stubs/models/subscription.ts",
-    "stubs/migrations/*.ts"
+    "stubs/migrations/*.ts",
+    "stubs/adapters/**/*"
   ],
   "dependencies": {},
   "registryDependencies": ["api", "creem"],

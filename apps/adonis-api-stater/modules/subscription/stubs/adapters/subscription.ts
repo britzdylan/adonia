@@ -1,7 +1,6 @@
 /**
- * Optional subscription adapters.
- *
- * Host wires CreemService + SubscriptionStore (Lucid by default).
+ * Host Lucid factory for subscriptions. Copied to app/adapters/subscription.ts.
+ * Import as `#adapters/subscription`.
  */
 import { SubscriptionService } from '#modules/subscription/service'
 import { LucidSubscriptionStore } from './lucid_subscription_store.ts'

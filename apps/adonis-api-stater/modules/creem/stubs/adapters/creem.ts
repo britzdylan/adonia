@@ -1,7 +1,6 @@
 /**
- * Optional Creem adapters.
- *
- * Host supplies API keys + product plan map (typically from env).
+ * Host Creem factory. Copied to app/adapters/creem.ts.
+ * Import as `#adapters/creem`.
  */
 import { CreemService } from '#modules/creem/service'
 import { CreemIoClient } from './creem_io_client.ts'

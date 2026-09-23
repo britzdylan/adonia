@@ -1,6 +1,6 @@
 /**
- * Optional SessionManager using Adonis access tokens.
- * Copy to app/adapters/auth when scaffolding.
+ * SessionManager using Adonis access tokens.
+ * Copied to app/adapters/lucid_access_token_session.ts.
  *
  * Controllers construct this per request and pass it into AuthService.
  */

@@ -16,6 +16,7 @@ npm test -w adonia
 npx adonia@latest init --wire
 npx adonia@latest add auth
 # optional host scaffolding:
+npx adonia@latest add auth --with-adapters
 npx adonia@latest add auth --with-stubs
 npx adonia@latest add auth --with-routes --wire-routes
 # or full kit:
@@ -37,9 +38,10 @@ npx adonia@latest init --scaffold
 |------|--------|
 | `--with-models` | Copy `stubs/models/**` |
 | `--with-migrations` | Copy `stubs/migrations/**` |
-| `--with-controllers` | Copy `stubs/controllers/**` |
+| `--with-controllers` | Copy `stubs/controllers/**` (implies `--with-adapters`) |
 | `--with-validators` | Copy `stubs/validators/**` and `stubs/providers/**` |
-| `--with-stubs` | Models, migrations, controllers, validators, Vine provider, limiter stub (not routes) |
+| `--with-adapters` | Copy Lucid/SDK adapters → `app/adapters/` |
+| `--with-stubs` | Models, migrations, controllers, validators, adapters, Vine provider, limiter stub (not routes) |
 | `--with-routes` | Copy `stubs/routes/**` → `start/routes/` and `stubs/start/**` → `start/` |
 | `--wire-routes` | Append `import './routes/<name>.js'` in `start/routes.ts` |
 | `--with-tests` | Copy colocated module tests |

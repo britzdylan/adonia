@@ -12,7 +12,9 @@ export interface ScaffoldFlags {
   withMigrations?: boolean
   withControllers?: boolean
   withValidators?: boolean
-  /** models + migrations + controllers + validators (not routes). */
+  /** Lucid / SDK host I/O → `app/adapters/`. */
+  withAdapters?: boolean
+  /** models + migrations + controllers + validators + adapters (not routes). */
   withStubs?: boolean
   withRoutes?: boolean
   wireRoutes?: boolean

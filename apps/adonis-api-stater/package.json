@@ -39,7 +39,6 @@
     "#modules/*": "./modules/*.js",
     "#modules/types": "./modules/types/index.js",
     "#modules/contracts": "./modules/contracts/index.js",
-    "#modules/adapters": "./modules/adapters/index.js",
     "#constants/*": "./modules/constants/*.js",
     "#constants": "./modules/constants/index.js",
     "#adapters/*": "./app/adapters/*.js"

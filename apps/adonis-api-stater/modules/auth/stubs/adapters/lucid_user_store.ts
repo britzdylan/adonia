@@ -1,5 +1,7 @@
 /**
- * Optional shared Lucid UserStore. Copy to app/adapters when scaffolding.
+ * Shared Lucid UserStore. Copied to app/adapters/lucid_user_store.ts.
+ * Import as `#adapters/lucid_user_store`. Auth and account both use this file.
+ *
  * Expects a User model at #models/user with email, password, authMethod,
  * firstName, lastName, avatarKey, emailVerifiedAt, and emailVerificationToken.
  */

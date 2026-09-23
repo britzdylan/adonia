@@ -12,6 +12,7 @@
   "stubs": [
     "stubs/controllers/account_controller.ts",
     "stubs/validators/account.ts",
+    "stubs/adapters/**/*",
     "stubs/routes/account.ts"
   ],
   "dependencies": {},

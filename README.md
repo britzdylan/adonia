@@ -25,6 +25,7 @@ npm test -w adonia
 ```bash
 npx adonia@latest init --wire
 npx adonia@latest add auth
+npx adonia@latest add auth --with-adapters
 npx adonia@latest add auth --with-stubs
 npx adonia@latest add auth --with-routes --wire-routes
 # or:
@@ -32,7 +33,7 @@ npx adonia@latest init --scaffold
 ```
 
 Plain `add` copies module files under `modules/` only. Host models,
-migrations, controllers, validators, and routes are opt-in.
+migrations, controllers, validators, adapters, and routes are opt-in.
 
 ## Monorepo development
 

@@ -1,9 +1,9 @@
 import { test } from '@japa/runner'
 import assert from 'node:assert/strict'
 import testUtils from '@adonisjs/core/services/test_utils'
-import { LucidUserStore } from '#modules/adapters/index'
-import { LucidPasswordResetStore } from '#modules/auth/adapters/index'
-import { LucidSubscriptionStore } from '#modules/subscription/adapters/index'
+import { LucidUserStore } from '#modules/auth/stubs/adapters/lucid_user_store'
+import { LucidPasswordResetStore } from '#modules/auth/stubs/adapters/lucid_password_reset_store'
+import { LucidSubscriptionStore } from '#modules/subscription/stubs/adapters/lucid_subscription_store'
 import User from '#models/user'
 
 test.group('Lucid adapters', (group) => {

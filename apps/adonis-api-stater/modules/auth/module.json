@@ -6,7 +6,6 @@
     "events.ts",
     "options.ts",
     "contracts/**",
-    "adapters/**",
     "module.json"
   ],
   "stubs": [
@@ -17,6 +16,7 @@
     "stubs/validators/**/*",
     "stubs/providers/**/*",
     "stubs/start/**/*",
+    "stubs/adapters/**/*",
     "stubs/routes/auth.ts"
   ],
   "dependencies": {},

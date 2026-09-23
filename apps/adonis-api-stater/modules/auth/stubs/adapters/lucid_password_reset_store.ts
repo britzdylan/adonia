@@ -1,5 +1,5 @@
 /**
- * Optional Lucid PasswordResetStore. Copy to app/adapters/auth when scaffolding.
+ * Lucid PasswordResetStore. Copied to app/adapters/lucid_password_reset_store.ts.
  * Expects PasswordReset at #models/password_reset with userId, token, expiresAt,
  * and a belongsTo user relation.
  */
@@ -7,7 +7,7 @@ import { DateTime } from 'luxon'
 import string from '@adonisjs/core/helpers/string'
 import encryption from '@adonisjs/core/services/encryption'
 import PasswordReset from '#models/password_reset'
-import { toUser } from '#modules/adapters/index'
+import { toUser } from './map_user.ts'
 import { defaultAuthOptions } from '#modules/auth/options'
 import type { User } from '#modules/contracts/index'
 import type {

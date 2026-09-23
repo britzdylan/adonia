@@ -5,7 +5,6 @@ const REQUIRED_IMPORTS: Record<string, string> = {
   '#modules/*': './modules/*.js',
   '#modules/types': './modules/types/index.js',
   '#modules/contracts': './modules/contracts/index.js',
-  '#modules/adapters': './modules/adapters/index.js',
   '#constants': './modules/constants/index.js',
   '#constants/*': './modules/constants/*.js',
   '#adapters/*': './app/adapters/*.js',
@@ -22,7 +21,7 @@ const EXCEPTION_HANDLER_REEXPORT = `export { default } from '#modules/api/except
 export function printWireChecklist(): void {
   console.log(`
 Host wiring checklist (run \`init --wire\` to apply automatically):
-  1. Merge #modules/*, #modules/types, #modules/contracts, #modules/adapters,
+  1. Merge #modules/*, #modules/types, #modules/contracts,
      #constants, #constants/*, #adapters/* into package.json "imports".
   2. Append () => import('#modules/api/provider') to adonisrc.ts providers.
   3. Set server.errorHandler(() => import('#modules/api/exception_handler')) in start/kernel.ts.

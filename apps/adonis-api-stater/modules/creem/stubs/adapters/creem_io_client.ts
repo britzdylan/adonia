@@ -1,5 +1,6 @@
 /**
- * Default CreemClient backed by creem_io.
+ * Default CreemClient backed by creem_io. Copied to app/adapters/creem_io_client.ts.
+ * Host supplies API keys from env.
  */
 import { createCreem } from 'creem_io'
 import type { WebhookOptions } from 'creem_io'

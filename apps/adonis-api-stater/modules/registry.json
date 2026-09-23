@@ -1,4 +1,4 @@
 {
-  "core": ["api", "types", "constants", "contracts", "adapters"],
+  "core": ["api", "types", "constants", "contracts"],
   "modules": ["auth", "account", "notification", "creem", "subscription"]
 }

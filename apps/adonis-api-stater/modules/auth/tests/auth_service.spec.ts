@@ -2,7 +2,7 @@ import { test } from '@japa/runner'
 import assert from 'node:assert/strict'
 import encryption from '@adonisjs/core/services/encryption'
 import { AuthService } from '#modules/auth/service'
-import { MemoryUserStore } from '#modules/adapters/tests/memory_user_store'
+import { MemoryUserStore } from '#modules/auth/tests/fakes/memory_user_store'
 import { MemoryPasswordResetStore } from '#modules/auth/tests/fakes/memory_password_reset_store'
 import { MemorySessionManager } from '#modules/auth/tests/fakes/memory_session_manager'
 

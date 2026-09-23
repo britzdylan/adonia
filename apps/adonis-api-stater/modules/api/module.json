@@ -14,8 +14,7 @@
   "registryDependencies": [
     "types",
     "constants",
-    "contracts",
-    "adapters"
+    "contracts"
   ],
   "peerModels": [],
   "configKeys": [],

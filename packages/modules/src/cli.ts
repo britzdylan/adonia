@@ -39,6 +39,7 @@ function scaffoldFromOpts(opts: Record<string, unknown>): ScaffoldFlags {
     withMigrations: Boolean(opts.withMigrations),
     withControllers: Boolean(opts.withControllers),
     withValidators: Boolean(opts.withValidators),
+    withAdapters: Boolean(opts.withAdapters),
     withStubs: Boolean(opts.withStubs),
     withRoutes: Boolean(opts.withRoutes),
     wireRoutes: Boolean(opts.wireRoutes),
@@ -50,11 +51,12 @@ function addScaffoldOptions(cmd: Command): Command {
   return cmd
     .option('--with-models', 'copy stubs/models into the host', false)
     .option('--with-migrations', 'copy stubs/migrations into the host', false)
-    .option('--with-controllers', 'copy stubs/controllers into the host', false)
+    .option('--with-controllers', 'copy stubs/controllers (implies --with-adapters)', false)
     .option('--with-validators', 'copy stubs/validators and Vine provider into the host', false)
+    .option('--with-adapters', 'copy Lucid/SDK adapters into app/adapters/', false)
     .option(
       '--with-stubs',
-      'copy models, migrations, controllers, validators, Vine provider, and limiter stub',
+      'copy models, migrations, controllers, validators, adapters, Vine provider, and limiter stub',
       false
     )
     .option('--with-routes', 'copy stubs/routes and start/limiter into the host', false)

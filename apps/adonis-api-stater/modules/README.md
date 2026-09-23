@@ -7,6 +7,7 @@ inside a fixture Adonis app used to design and test slices. Hosts do
 ```bash
 npx adonia@latest init --wire
 npx adonia@latest add auth
+npx adonia@latest add auth --with-adapters
 npx adonia@latest add auth --with-stubs
 npx adonia@latest add auth --with-routes --wire-routes
 # or full kit:
@@ -29,7 +30,7 @@ node packages/modules/build/cli.js add auth \
 
 | Path | Role |
 |------|------|
-| `types/`, `constants/`, `contracts/`, `adapters/` | Shared core (always copy with `api`) |
+| `types/`, `constants/`, `contracts/` | Shared core (always copy with `api`) |
 | `api/` | Envelopes, `ApiService`, `ctx.respond`, exception handler |
 | `auth/`, `account/`, `notification/`, `creem/`, `subscription/` | Feature modules |
 
@@ -43,10 +44,13 @@ Each feature module (and `api`) ships a manifest:
 
 - **files** — domain slice copy set (relative to the module folder).
 - **stubs** — host files under `stubs/` (`models`, `migrations`,
-  `controllers`, `validators`, `providers`, `start`, `routes`). Opt-in
-  via CLI `--with-*` flags; plain `add` does not copy them. `--with-validators`
+  `controllers`, `validators`, `adapters`, `providers`, `start`,
+  `routes`). Opt-in via CLI `--with-*` flags; plain `add` does not copy
+  them. `--with-adapters` copies Lucid/SDK adapters to `app/adapters/`.
+  `--with-controllers` and `--with-stubs` imply adapters. `--with-validators`
   also copies `providers/`; `--with-routes` and `--with-stubs` also copy
-  `start/` (limiter example).
+  `start/` (limiter example). Portable no-ops (`NoopAvatarStorage`,
+  `NoopMailTransport`) stay in the module `files` set.
 - **dependencies** — npm packages this module imports.
 - **registryDependencies** — other modules that must already be present.
 - **peerModels** — `#models/*` aliases Lucid adapters expect.
@@ -62,17 +66,15 @@ Each feature module (and `api`) ships a manifest:
 Prefer `npx adonia`. If installing by hand:
 
 1. Aliases: `#modules/*`, `#modules/types`, `#constants`, `#adapters/*`.
-2. Copy `api` + `types` + `constants` + `contracts` (+ shared `adapters`
-   when using Lucid).
+2. Copy `api` + `types` + `constants` + `contracts`.
 3. Register `#modules/api/provider` and `#modules/api/exception_handler`.
 4. Copy feature modules in `registryDependencies` order.
-5. Optionally copy stubs (`--with-stubs` / `--with-routes`) into `app/`,
-   `database/`, `providers/`, `start/`, and `start/routes/`. Register
+5. Optionally copy stubs (`--with-stubs` / `--with-adapters` /
+   `--with-routes`) into `app/`, `app/adapters/`, `database/`,
+   `providers/`, `start/`, and `start/routes/`. Register
    `providers/vine_provider.ts` in `adonisrc.ts`. `@adonisjs/limiter` is
    an optional peer for the limiter stub.
 6. Fill `config/modules.ts` from each module's `events` list.
-7. Optional: replace Lucid adapters with host adapters; delete `adapters/`
-   after copy if unused.
 
 ## Authoring a new module
 

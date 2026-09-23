@@ -1,7 +1,6 @@
 /**
- * Optional Lucid AppNotificationStore.
- * Expects a model at #models/app_notification (or #models/notification) with
- * userId, type, title, body, data columns.
+ * Lucid AppNotificationStore. Copied to app/adapters/lucid_app_notification_store.ts.
+ * Expects a model at #models/app_notification with userId, type, title, body, data.
  */
 import AppNotificationModel from '#models/app_notification'
 import type {

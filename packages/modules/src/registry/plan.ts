@@ -21,6 +21,7 @@ export type StubFolder =
   | 'routes'
   | 'providers'
   | 'start'
+  | 'adapters'
 
 export interface StubSelect {
   models: boolean
@@ -32,6 +33,11 @@ export interface StubSelect {
   providers: boolean
   /** Host start files (limiter); selected with `--with-routes` or `--with-stubs`. */
   start: boolean
+  /**
+   * Lucid / SDK host I/O. Selected with `--with-adapters`, `--with-stubs`,
+   * or `--with-controllers`.
+   */
+  adapters: boolean
 }
 
 const APP_STUB_FOLDERS: StubFolder[] = ['models', 'migrations', 'controllers', 'validators']
@@ -49,6 +55,7 @@ const STUB_FOLDER_TO_PATH_KEY: Record<
 export const DEFAULT_ROUTES_DIR = 'start/routes'
 export const DEFAULT_PROVIDERS_DIR = 'providers'
 export const DEFAULT_START_DIR = 'start'
+export const DEFAULT_ADAPTERS_DIR = 'app/adapters'
 
 export function resolveStubSelect(flags: {
   withStubs?: boolean
@@ -57,24 +64,28 @@ export function resolveStubSelect(flags: {
   withControllers?: boolean
   withValidators?: boolean
   withRoutes?: boolean
+  withAdapters?: boolean
 }): StubSelect | null {
   const withStubs = Boolean(flags.withStubs)
   const withValidators = withStubs || Boolean(flags.withValidators)
+  const withControllers = withStubs || Boolean(flags.withControllers)
   const withRoutes = Boolean(flags.withRoutes)
   const select: StubSelect = {
     models: withStubs || Boolean(flags.withModels),
     migrations: withStubs || Boolean(flags.withMigrations),
-    controllers: withStubs || Boolean(flags.withControllers),
+    controllers: withControllers,
     validators: withValidators,
     routes: withRoutes,
     providers: withValidators,
     start: withStubs || withRoutes,
+    adapters: withStubs || withControllers || Boolean(flags.withAdapters),
   }
   if (
     !APP_STUB_FOLDERS.some((f) => select[f]) &&
     !select.routes &&
     !select.providers &&
-    !select.start
+    !select.start &&
+    !select.adapters
   ) {
     return null
   }
@@ -84,7 +95,10 @@ export function resolveStubSelect(flags: {
 export function anyAppStubsSelected(select: StubSelect | null): boolean {
   if (!select) return false
   return (
-    APP_STUB_FOLDERS.some((f) => select[f]) || select.providers || select.start
+    APP_STUB_FOLDERS.some((f) => select[f]) ||
+    select.providers ||
+    select.start ||
+    select.adapters
   )
 }
 
@@ -157,6 +171,15 @@ export function planStubs(
       plans.push({
         src: join(root, rel),
         dest: join(cwd, DEFAULT_START_DIR, rest),
+        kind: 'stub',
+      })
+      continue
+    }
+
+    if (folder === 'adapters') {
+      plans.push({
+        src: join(root, rel),
+        dest: join(cwd, DEFAULT_ADAPTERS_DIR, rest),
         kind: 'stub',
       })
       continue

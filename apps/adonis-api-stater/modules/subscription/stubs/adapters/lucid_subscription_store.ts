@@ -1,6 +1,6 @@
 /**
- * Optional Lucid SubscriptionStore.
- * Expects a Subscription model at #models/subscription with the usual Creem columns.
+ * Lucid SubscriptionStore. Copied to app/adapters/lucid_subscription_store.ts.
+ * Expects a Subscription model at #models/subscription.
  */
 import { DateTime } from 'luxon'
 import SubscriptionModel from '#models/subscription'
