@@ -22,6 +22,10 @@
 - CLI hardening: safe `server` import on `--wire`, do not mark
   `installed` on file conflicts, fail closed on `github:` registries,
   `check` enforces `registryDependencies` and warns on `configKeys`.
+- Auth stubs: logout, password/validate, activate/request; Vine
+  unique/exists/validToken/validPassword rules + provider; limiter
+  example. `--with-validators` copies `providers/`; `--with-routes`
+  and `--with-stubs` copy `start/limiter.ts`.
 
 ## 0.1.0
 

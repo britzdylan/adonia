@@ -13,7 +13,14 @@ export interface PlannedCopy {
 }
 
 /** App stub folders selected by CLI flags. Routes are never included in `--with-stubs`. */
-export type StubFolder = 'models' | 'migrations' | 'controllers' | 'validators' | 'routes'
+export type StubFolder =
+  | 'models'
+  | 'migrations'
+  | 'controllers'
+  | 'validators'
+  | 'routes'
+  | 'providers'
+  | 'start'
 
 export interface StubSelect {
   models: boolean
@@ -21,12 +28,16 @@ export interface StubSelect {
   controllers: boolean
   validators: boolean
   routes: boolean
+  /** Vine macros; selected with `--with-validators` or `--with-stubs`. */
+  providers: boolean
+  /** Host start files (limiter); selected with `--with-routes` or `--with-stubs`. */
+  start: boolean
 }
 
 const APP_STUB_FOLDERS: StubFolder[] = ['models', 'migrations', 'controllers', 'validators']
 
 const STUB_FOLDER_TO_PATH_KEY: Record<
-  Exclude<StubFolder, 'routes'>,
+  Extract<StubFolder, 'models' | 'migrations' | 'controllers' | 'validators'>,
   keyof HostModulesConfig['paths']
 > = {
   models: 'models',
@@ -36,6 +47,8 @@ const STUB_FOLDER_TO_PATH_KEY: Record<
 }
 
 export const DEFAULT_ROUTES_DIR = 'start/routes'
+export const DEFAULT_PROVIDERS_DIR = 'providers'
+export const DEFAULT_START_DIR = 'start'
 
 export function resolveStubSelect(flags: {
   withStubs?: boolean
@@ -45,20 +58,34 @@ export function resolveStubSelect(flags: {
   withValidators?: boolean
   withRoutes?: boolean
 }): StubSelect | null {
+  const withStubs = Boolean(flags.withStubs)
+  const withValidators = withStubs || Boolean(flags.withValidators)
+  const withRoutes = Boolean(flags.withRoutes)
   const select: StubSelect = {
-    models: Boolean(flags.withStubs || flags.withModels),
-    migrations: Boolean(flags.withStubs || flags.withMigrations),
-    controllers: Boolean(flags.withStubs || flags.withControllers),
-    validators: Boolean(flags.withStubs || flags.withValidators),
-    routes: Boolean(flags.withRoutes),
+    models: withStubs || Boolean(flags.withModels),
+    migrations: withStubs || Boolean(flags.withMigrations),
+    controllers: withStubs || Boolean(flags.withControllers),
+    validators: withValidators,
+    routes: withRoutes,
+    providers: withValidators,
+    start: withStubs || withRoutes,
   }
-  if (!APP_STUB_FOLDERS.some((f) => select[f]) && !select.routes) return null
+  if (
+    !APP_STUB_FOLDERS.some((f) => select[f]) &&
+    !select.routes &&
+    !select.providers &&
+    !select.start
+  ) {
+    return null
+  }
   return select
 }
 
 export function anyAppStubsSelected(select: StubSelect | null): boolean {
   if (!select) return false
-  return APP_STUB_FOLDERS.some((f) => select[f])
+  return (
+    APP_STUB_FOLDERS.some((f) => select[f]) || select.providers || select.start
+  )
 }
 
 export function planModuleFiles(
@@ -112,6 +139,24 @@ export function planStubs(
       plans.push({
         src: join(root, rel),
         dest: join(cwd, DEFAULT_ROUTES_DIR, rest),
+        kind: 'stub',
+      })
+      continue
+    }
+
+    if (folder === 'providers') {
+      plans.push({
+        src: join(root, rel),
+        dest: join(cwd, DEFAULT_PROVIDERS_DIR, rest),
+        kind: 'stub',
+      })
+      continue
+    }
+
+    if (folder === 'start') {
+      plans.push({
+        src: join(root, rel),
+        dest: join(cwd, DEFAULT_START_DIR, rest),
         kind: 'stub',
       })
       continue

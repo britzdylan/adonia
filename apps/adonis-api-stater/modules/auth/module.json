@@ -14,7 +14,9 @@
     "stubs/models/password_reset.ts",
     "stubs/migrations/*.ts",
     "stubs/controllers/auth_controller.ts",
-    "stubs/validators/auth.ts",
+    "stubs/validators/**/*",
+    "stubs/providers/**/*",
+    "stubs/start/**/*",
     "stubs/routes/auth.ts"
   ],
   "dependencies": {},

@@ -38,9 +38,9 @@ npx adonia@latest init --scaffold
 | `--with-models` | Copy `stubs/models/**` |
 | `--with-migrations` | Copy `stubs/migrations/**` |
 | `--with-controllers` | Copy `stubs/controllers/**` |
-| `--with-validators` | Copy `stubs/validators/**` |
-| `--with-stubs` | All four above (not routes) |
-| `--with-routes` | Copy `stubs/routes/**` → `start/routes/` |
+| `--with-validators` | Copy `stubs/validators/**` and `stubs/providers/**` |
+| `--with-stubs` | Models, migrations, controllers, validators, Vine provider, limiter stub (not routes) |
+| `--with-routes` | Copy `stubs/routes/**` → `start/routes/` and `stubs/start/**` → `start/` |
 | `--wire-routes` | Append `import './routes/<name>.js'` in `start/routes.ts` |
 | `--with-tests` | Copy colocated module tests |
 

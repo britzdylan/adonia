@@ -43,8 +43,10 @@ Each feature module (and `api`) ships a manifest:
 
 - **files** — domain slice copy set (relative to the module folder).
 - **stubs** — host files under `stubs/` (`models`, `migrations`,
-  `controllers`, `validators`, `routes`). Opt-in via CLI `--with-*`
-  flags; plain `add` does not copy them.
+  `controllers`, `validators`, `providers`, `start`, `routes`). Opt-in
+  via CLI `--with-*` flags; plain `add` does not copy them. `--with-validators`
+  also copies `providers/`; `--with-routes` and `--with-stubs` also copy
+  `start/` (limiter example).
 - **dependencies** — npm packages this module imports.
 - **registryDependencies** — other modules that must already be present.
 - **peerModels** — `#models/*` aliases Lucid adapters expect.
@@ -65,7 +67,9 @@ Prefer `npx adonia`. If installing by hand:
 3. Register `#modules/api/provider` and `#modules/api/exception_handler`.
 4. Copy feature modules in `registryDependencies` order.
 5. Optionally copy stubs (`--with-stubs` / `--with-routes`) into `app/`,
-   `database/`, and `start/routes/`.
+   `database/`, `providers/`, `start/`, and `start/routes/`. Register
+   `providers/vine_provider.ts` in `adonisrc.ts`. `@adonisjs/limiter` is
+   an optional peer for the limiter stub.
 6. Fill `config/modules.ts` from each module's `events` list.
 7. Optional: replace Lucid adapters with host adapters; delete `adapters/`
    after copy if unused.

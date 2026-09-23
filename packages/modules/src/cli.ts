@@ -51,9 +51,13 @@ function addScaffoldOptions(cmd: Command): Command {
     .option('--with-models', 'copy stubs/models into the host', false)
     .option('--with-migrations', 'copy stubs/migrations into the host', false)
     .option('--with-controllers', 'copy stubs/controllers into the host', false)
-    .option('--with-validators', 'copy stubs/validators into the host', false)
-    .option('--with-stubs', 'copy models, migrations, controllers, and validators', false)
-    .option('--with-routes', 'copy stubs/routes into start/routes/', false)
+    .option('--with-validators', 'copy stubs/validators and Vine provider into the host', false)
+    .option(
+      '--with-stubs',
+      'copy models, migrations, controllers, validators, Vine provider, and limiter stub',
+      false
+    )
+    .option('--with-routes', 'copy stubs/routes and start/limiter into the host', false)
     .option('--wire-routes', 'append imports in start/routes.ts for module route files', false)
     .option('--with-tests', 'copy colocated module tests', false)
 }

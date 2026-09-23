@@ -252,6 +252,14 @@ function printNextSteps(
     if (stubSelect?.routes && !flags.wireRoutes) {
       console.log(`  adonia add ${exampleName} --wire-routes  # mount start/routes/${exampleName}.ts`)
     }
+    if (stubSelect?.providers) {
+      console.log('  Register providers/vine_provider.ts in adonisrc.ts providers.')
+    }
+    if (stubSelect?.start) {
+      console.log(
+        '  Optional: install @adonisjs/limiter and uncomment .use(authLimiter) on sensitive routes.'
+      )
+    }
     console.log('  1. Run migrations: node ace migration:run')
     console.log('  2. Listen for module events as needed')
   }

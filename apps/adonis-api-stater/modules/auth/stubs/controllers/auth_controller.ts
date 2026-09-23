@@ -1,11 +1,16 @@
 /**
  * Example auth controller. Copy into app/controllers and register routes.
  * Not registered by the starter.
+ *
+ * Copy Vine provider (`providers/vine_provider.ts`) and register it in
+ * adonisrc.ts so unique/exists/validToken/validPassword macros load.
+ * Logout needs named auth middleware from start/kernel.ts.
  */
 import type { HttpContext } from '@adonisjs/core/http'
 import {
   createAuthService,
   LucidAccessTokenSession,
+  LucidUserStore,
 } from '#modules/auth/adapters/index'
 import { responseCodes } from '#constants/responseCodes'
 import {
@@ -14,6 +19,8 @@ import {
   activateValidator,
   requestPasswordResetValidator,
   updatePasswordValidator,
+  validatePasswordResetValidator,
+  resendActivationValidator,
 } from '../validators/auth.ts'
 
 const auth = createAuthService()
@@ -44,6 +51,18 @@ export default class AuthController {
     )
   }
 
+  async logout(ctx: HttpContext) {
+    const session = new LucidAccessTokenSession(ctx)
+    await auth.logout(session)
+    return ctx.response.ok(
+      await ctx.respond({
+        success: true,
+        message: responseCodes.AUTH_LOGOUT.code,
+        data: null,
+      })
+    )
+  }
+
   async activate(ctx: HttpContext) {
     const { token } = await ctx.request.validateUsing(activateValidator)
     const user = await auth.activateUserAccount(token)
@@ -56,6 +75,19 @@ export default class AuthController {
     )
   }
 
+  async sendAccountActivationEmail(ctx: HttpContext) {
+    const { email } = await ctx.request.validateUsing(resendActivationValidator)
+    const user = await new LucidUserStore().findByEmailOrFail(email)
+    await auth.createNewVerificationToken(user)
+    return ctx.response.ok(
+      await ctx.respond({
+        success: true,
+        message: responseCodes.AUTH_ACTIVATE_ACCOUNT_REQUEST.code,
+        data: null,
+      })
+    )
+  }
+
   async requestPasswordReset(ctx: HttpContext) {
     const { email } = await ctx.request.validateUsing(requestPasswordResetValidator)
     await auth.requestPasswordReset(email)
@@ -64,6 +96,18 @@ export default class AuthController {
         success: true,
         message: responseCodes.AUTH_RESET_PASSWORD_REQUEST.code,
         data: null,
+      })
+    )
+  }
+
+  async validatePasswordReset(ctx: HttpContext) {
+    const { token } = await ctx.request.validateUsing(validatePasswordResetValidator)
+    const reset = await auth.validatePasswordResetToken(token)
+    return ctx.response.ok(
+      await ctx.respond({
+        success: true,
+        message: responseCodes.AUTH_VALIDATE_PASSWORD_RESET.code,
+        data: reset,
       })
     )
   }
