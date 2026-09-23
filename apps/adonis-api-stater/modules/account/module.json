@@ -6,7 +6,6 @@
     "events.ts",
     "options.ts",
     "contracts/**",
-    "adapters/**",
     "module.json"
   ],
   "stubs": [

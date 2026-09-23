@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { formatMissingPeer, missingAdonisPeers } from '../adonis_peers.js'
 import { loadHostConfig } from '../host.js'
 import { loadManifest, resolveRegistry } from '../registry/index.js'
 import { CORE_PACKAGES } from '../schema.js'
@@ -98,6 +99,10 @@ export async function runCheck(flags: SharedFlags & { strict?: boolean }): Promi
             }
           }
         }
+      }
+
+      for (const peer of missingAdonisPeers(flags.cwd, name)) {
+        warnings.push(formatMissingPeer(peer))
       }
 
       if (manifest.configKeys.length) {

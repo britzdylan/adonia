@@ -34,6 +34,9 @@ npx adonia@latest init --scaffold
 
 Plain `add` copies module files under `modules/` only. Host models,
 migrations, controllers, validators, adapters, and routes are opt-in.
+Adonis kits used by stubs (`@adonisjs/mail`, `@adonisjs/drive`,
+`@adonisjs/limiter`) must already be configured; otherwise `add` and
+`check` print `node ace add @adonisjs/<pkg>`.
 
 ## Monorepo development
 

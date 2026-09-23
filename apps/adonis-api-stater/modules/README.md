@@ -49,8 +49,10 @@ Each feature module (and `api`) ships a manifest:
   them. `--with-adapters` copies Lucid/SDK adapters to `app/adapters/`.
   `--with-controllers` and `--with-stubs` imply adapters. `--with-validators`
   also copies `providers/`; `--with-routes` and `--with-stubs` also copy
-  `start/` (limiter example). Portable no-ops (`NoopAvatarStorage`,
-  `NoopMailTransport`) stay in the module `files` set.
+  `start/` (limiter example). Adonis kits (`@adonisjs/mail`,
+  `@adonisjs/drive`, `@adonisjs/limiter`) are not stubbed with no-ops.
+  `add` and `check` warn when a copied stub needs a kit that is missing
+  from `package.json` and print `node ace add @adonisjs/<pkg>`.
 - **dependencies** — npm packages this module imports.
 - **registryDependencies** — other modules that must already be present.
 - **peerModels** — `#models/*` aliases Lucid adapters expect.
@@ -72,8 +74,9 @@ Prefer `npx adonia`. If installing by hand:
 5. Optionally copy stubs (`--with-stubs` / `--with-adapters` /
    `--with-routes`) into `app/`, `app/adapters/`, `database/`,
    `providers/`, `start/`, and `start/routes/`. Register
-   `providers/vine_provider.ts` in `adonisrc.ts`. `@adonisjs/limiter` is
-   an optional peer for the limiter stub.
+   `providers/vine_provider.ts` in `adonisrc.ts`. If a copied stub
+   imports `@adonisjs/mail`, `@adonisjs/drive`, or `@adonisjs/limiter`,
+   run `node ace add` for that package (the CLI prints the command).
 6. Fill `config/modules.ts` from each module's `events` list.
 
 ## Authoring a new module

@@ -177,6 +177,7 @@ describe('adonia CLI', () => {
     assert.ok(existsSync(join(host, 'providers/vine_provider.ts')))
     assert.ok(existsSync(join(host, 'start/limiter.ts')))
     assert.ok(!existsSync(join(host, 'start/routes/auth.ts')))
+    assert.ok(/node ace add @adonisjs\/limiter/.test(r.stdout + r.stderr), r.stdout + r.stderr)
   })
 
   it('add auth --with-adapters copies Lucid factories without controllers', () => {
@@ -189,6 +190,31 @@ describe('adonia CLI', () => {
     assert.ok(existsSync(join(host, 'app/adapters/lucid_user_store.ts')))
     assert.ok(!existsSync(join(host, 'app/controllers/auth_controller.ts')))
     assert.ok(!existsSync(join(host, 'modules/auth/adapters')))
+    assert.ok(!/node ace add @adonisjs\/limiter/.test(r.stdout + r.stderr))
+  })
+
+  it('add account --with-adapters tells host to ace add drive', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const r = run(['add', 'account', '--with-adapters'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    assert.ok(existsSync(join(host, 'app/adapters/drive_avatar_storage.ts')))
+    assert.ok(existsSync(join(host, 'app/adapters/account.ts')))
+    assert.ok(!existsSync(join(host, 'modules/account/adapters')))
+    assert.ok(/node ace add @adonisjs\/drive/.test(r.stdout + r.stderr), r.stdout + r.stderr)
+  })
+
+  it('add notification --with-adapters tells host to ace add mail', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const r = run(['add', 'notification', '--with-adapters'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    assert.ok(existsSync(join(host, 'app/adapters/adonis_mail_transport.ts')))
+    assert.ok(existsSync(join(host, 'app/adapters/notification.ts')))
+    assert.ok(!existsSync(join(host, 'modules/notification/adapters')))
+    assert.ok(/node ace add @adonisjs\/mail/.test(r.stdout + r.stderr), r.stdout + r.stderr)
   })
 
   it('add auth --with-controllers --with-validators --with-routes writes full auth HTTP surface', () => {
@@ -330,6 +356,18 @@ describe('adonia CLI', () => {
     assert.equal(run(['diff', 'auth'], host).status, 0)
     writeFileSync(join(host, 'modules/auth/service.ts'), '// edit\n', { flag: 'a' })
     assert.equal(run(['diff', 'auth'], host).status, 1)
+  })
+
+  it('check warns when limiter stub is present without the package', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    assert.equal(run(['add', 'auth', '--with-stubs'], host).status, 0)
+    const check = run(['check'], host)
+    assert.equal(check.status, 0, check.stdout + check.stderr)
+    const out = check.stdout + check.stderr
+    assert.ok(/node ace add @adonisjs\/limiter/.test(out), out)
+    assert.ok(/check passed/.test(out), out)
   })
 
   it('check fails when peer model missing after plain add', () => {

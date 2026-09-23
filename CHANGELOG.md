@@ -29,6 +29,17 @@
   unique/exists/validToken/validPassword rules + provider; limiter
   example. `--with-validators` copies `providers/`; `--with-routes`
   and `--with-stubs` copy `start/limiter.ts`.
+- Drive and Mail adapter stubs (`DriveAvatarStorage`,
+  `AdonisMailTransport`). `add` and `check` warn when those stubs (or
+  the limiter example) are present but `@adonisjs/drive`,
+  `@adonisjs/mail`, or `@adonisjs/limiter` is missing, and print
+  `node ace add @adonisjs/<pkg>`.
+
+### Changed
+
+- Removed portable no-op Mail / Drive / in-app notification adapters
+  from the module `files` set. Adonis kits are assumed installed and
+  configured, or the CLI tells you to add them.
 
 ## 0.1.0
 

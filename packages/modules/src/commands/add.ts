@@ -26,6 +26,7 @@ import {
 } from '../registry/plan.js'
 import type { HostModulesConfig } from '../schema.js'
 import type { ScaffoldFlags, SharedFlags } from '../types.js'
+import { formatMissingPeer, missingAdonisPeers } from '../adonis_peers.js'
 import { wireModuleRoute } from '../wire.js'
 
 export interface AddFlags extends SharedFlags, ScaffoldFlags {
@@ -111,6 +112,7 @@ export async function installModules(opts: {
   const wireErrors: string[] = []
   const warnings: string[] = []
   const npmDeps = new Map<string, string>()
+  const plannedDests = new Set<string>()
   const stubSelect = resolveStubSelect(flags)
   const requestedNames = new Set(names)
 
@@ -126,6 +128,7 @@ export async function installModules(opts: {
     if (flags.withTests) {
       plans.push(...planTests(registry, name, config, flags.cwd))
     }
+    for (const p of plans) plannedDests.add(p.dest)
 
     if (flags.dryRun) {
       for (const p of plans) {
@@ -228,6 +231,12 @@ export async function installModules(opts: {
     console.log(`Would install npm deps: ${[...npmDeps.keys()].join(', ')}`)
   }
 
+  for (const name of names) {
+    for (const peer of missingAdonisPeers(flags.cwd, name, { plannedFiles: plannedDests })) {
+      warnings.push(formatMissingPeer(peer))
+    }
+  }
+
   for (const w of warnings) {
     if (w) console.warn(w)
   }
@@ -257,9 +266,7 @@ function printNextSteps(
       console.log('  Register providers/vine_provider.ts in adonisrc.ts providers.')
     }
     if (stubSelect?.start) {
-      console.log(
-        '  Optional: install @adonisjs/limiter and uncomment .use(authLimiter) on sensitive routes.'
-      )
+      console.log('  After limiter is installed, uncomment .use(authLimiter) on sensitive routes.')
     }
     console.log('  1. Run migrations: node ace migration:run')
     console.log('  2. Listen for module events as needed')

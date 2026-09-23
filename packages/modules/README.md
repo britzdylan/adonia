@@ -49,6 +49,11 @@ npx adonia@latest init --scaffold
 `diff` accepts the same `--with-*` flags; without them it diffs the
 module tree only.
 
+Adonis kits used by stubs (`@adonisjs/mail`, `@adonisjs/drive`,
+`@adonisjs/limiter`) are not installed by `adonia add`. The CLI assumes
+they are already configured, or `add` / `check` prints
+`node ace add @adonisjs/<pkg>`.
+
 Shared flags: `--yes`, `--dry-run`, `--cwd`, `--registry`, `--overwrite`.
 
 ## Developing in the monorepo

@@ -5,7 +5,6 @@
     "service.ts",
     "options.ts",
     "contracts/**",
-    "adapters/**",
     "module.json"
   ],
   "stubs": [

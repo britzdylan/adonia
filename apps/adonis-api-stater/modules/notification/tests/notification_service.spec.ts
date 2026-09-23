@@ -1,7 +1,6 @@
 import { test } from '@japa/runner'
 import assert from 'node:assert/strict'
 import { NotificationService } from '#modules/notification/service'
-import { createNotificationService } from '#modules/notification/adapters/index'
 import { MemoryMailTransport } from '#modules/notification/tests/fakes/memory_mail_transport'
 import { MemoryAppNotificationStore } from '#modules/notification/tests/fakes/memory_app_notification_store'
 import type { NotificationRegistry } from '#modules/notification/contracts/index'
@@ -25,7 +24,7 @@ test.group('NotificationService', () => {
   test('send typo is a compile-time error when using a typed registry', async () => {
     const mail = new MemoryMailTransport()
     const app = new MemoryAppNotificationStore()
-    const service = createNotificationService(registry, { mail, appNotifications: app })
+    const service = new NotificationService(registry, mail, app)
 
     // @ts-expect-error typo is not a registry key
     await service.send('typo', ['email'], {})
@@ -51,7 +50,7 @@ test.group('NotificationService', () => {
   test('dispatches to both channels', async () => {
     const mail = new MemoryMailTransport()
     const app = new MemoryAppNotificationStore()
-    const service = createNotificationService(registry, { mail, appNotifications: app })
+    const service = new NotificationService(registry, mail, app)
     const status = await service.send('new_submission', ['email', 'app'], {
       email: 'a@test.com',
       userId: 1,
