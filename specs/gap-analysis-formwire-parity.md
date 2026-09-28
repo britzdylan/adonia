@@ -165,11 +165,11 @@ Adonia does not provide health check setup.
 |------|---------|-----|
 | `list` command | Yes | `cli.test.ts` list without config + after init/add |
 | `--dry-run` flag | Yes | `init --dry-run` and `add --dry-run` write nothing |
-| `--with-tests` flag | No | Not tested |
+| `--with-tests` flag | Yes | `add auth --with-tests` copies `modules/auth/tests` |
 | npm dependency installation | No | `installNpmDeps()` not tested |
 | Env key reporting | No | Missing env key output not tested |
 | Registry resolution (bundled) | Partial | Bundled fallback tested only in pack_smoke |
-| `check --strict` | No | Warnings-as-failures not tested |
+| `check --strict` | Yes | Warnings-as-failures after `init --wire` |
 | `schema/adonia.schema.json` | No | JSON schema not validated |
 | Dependency cycle detection | No | `expandDependencies` cycle error not tested |
 | `constants_merge` logic | No | Not unit tested |
@@ -203,6 +203,6 @@ These are FormWire product features, not generic Adonia modules:
 1. **Auth module stubs** — DONE
 2. **Account module stubs** — DONE
 3. **Add `list` and `--dry-run` tests** — DONE
-4. **Add `--with-tests` and `check --strict` tests** — validates existing behavior
+4. **Add `--with-tests` and `check --strict` tests** — DONE
 5. **Update cli-hardening.md spec** — mark all items as done
 6. **Add CHANGELOG entry** — document breaking change (stub default inverted, `--skip-stubs` removed)

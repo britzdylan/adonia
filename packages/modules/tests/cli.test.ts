@@ -206,6 +206,7 @@ describe('adonia CLI', () => {
     assert.ok(!existsSync(join(host, 'start/routes/auth.ts')))
     assert.ok(!existsSync(join(host, 'providers/vine_provider.ts')))
     assert.ok(!existsSync(join(host, 'start/limiter.ts')))
+    assert.ok(!existsSync(join(host, 'modules/auth/tests')))
     const modulesConfig = readFileSync(join(host, 'config/modules.ts'), 'utf8')
     assert.ok(modulesConfig.includes('Auth:Login'))
     const installed = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8')).installed
@@ -213,6 +214,22 @@ describe('adonia CLI', () => {
     assert.ok(installed.includes('api'))
     const out = r.stdout + r.stderr
     assert.ok(/--with-stubs/.test(out), out)
+  })
+
+  it('add auth --with-tests copies colocated module tests', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const r = run(['add', 'auth', '--with-tests'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    assert.ok(existsSync(join(host, 'modules/auth/tests/auth_service.spec.ts')))
+    assert.ok(existsSync(join(host, 'modules/auth/tests/auth_update_password.spec.ts')))
+    assert.ok(existsSync(join(host, 'modules/auth/tests/fakes/memory_user_store.ts')))
+    assert.ok(!existsSync(join(host, 'app/models/user.ts')))
+    assert.ok(!existsSync(join(host, 'modules/api/tests')), r.stdout + r.stderr)
+    const out = r.stdout + r.stderr
+    assert.ok(/copied: test:/.test(out), out)
+    assert.ok(!/formwire/i.test(out), out)
   })
 
   it('add --dry-run does not copy files, stubs, or mark installed', () => {
@@ -491,6 +508,22 @@ describe('adonia CLI', () => {
     const out = check.stdout + check.stderr
     assert.ok(/node ace add @adonisjs\/limiter/.test(out), out)
     assert.ok(/check passed/.test(out), out)
+  })
+
+  it('check --strict fails when there are only warnings', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const loose = run(['check'], host)
+    assert.equal(loose.status, 0, loose.stdout + loose.stderr)
+    const looseOut = loose.stdout + loose.stderr
+    assert.ok(/check passed/.test(looseOut), looseOut)
+    assert.ok(/warn:/.test(looseOut), looseOut)
+    const strict = run(['check', '--strict'], host)
+    assert.equal(strict.status, 1, strict.stdout + strict.stderr)
+    const strictOut = strict.stdout + strict.stderr
+    assert.ok(/warn:/.test(strictOut), strictOut)
+    assert.ok(!/error:/.test(strictOut), strictOut)
   })
 
   it('check fails when peer model missing after plain add', () => {
