@@ -2,15 +2,15 @@ import vine from '@vinejs/vine'
 
 export const updateProfileValidator = vine.compile(
   vine.object({
-    firstName: vine.string().optional(),
-    lastName: vine.string().optional(),
+    firstName: vine.string().trim().maxLength(80).optional(),
+    lastName: vine.string().trim().maxLength(80).optional(),
     avatarKey: vine.string().nullable().optional(),
   })
 )
 
 export const replaceEmailValidator = vine.compile(
   vine.object({
-    email: vine.string().email(),
+    email: vine.string().email().normalizeEmail().unique({ table: 'users', column: 'email' }),
   })
 )
 
@@ -23,6 +23,15 @@ export const confirmEmailChangeValidator = vine.compile(
 export const replacePasswordValidator = vine.compile(
   vine.object({
     currentPassword: vine.string(),
-    newPassword: vine.string().minLength(8),
+    newPassword: vine.string().validPassword().confirmed(),
+  })
+)
+
+export const updateNotificationsValidator = vine.compile(
+  vine.object({
+    emailMarketing: vine.boolean().optional(),
+    emailProductUpdates: vine.boolean().optional(),
+    emailSecurityAlerts: vine.boolean().optional(),
+    emailWeeklyDigest: vine.boolean().optional(),
   })
 )

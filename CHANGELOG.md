@@ -34,6 +34,10 @@
   the limiter example) are present but `@adonisjs/drive`,
   `@adonisjs/mail`, or `@adonisjs/limiter` is missing, and print
   `node ace add @adonisjs/<pkg>`.
+- Account stubs: `GET /user`, notification preferences, inbox, and
+  `DELETE /account`; Vine confirmation, `normalizeEmail`, name
+  trim/maxLength, and `updateNotificationsValidator`. `accountLimiter`
+  (60/min) lives next to `authLimiter` in `start/limiter.ts`.
 
 ### Changed
 

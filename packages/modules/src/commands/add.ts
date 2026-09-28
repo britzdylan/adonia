@@ -266,7 +266,9 @@ function printNextSteps(
       console.log('  Register providers/vine_provider.ts in adonisrc.ts providers.')
     }
     if (stubSelect?.start) {
-      console.log('  After limiter is installed, uncomment .use(authLimiter) on sensitive routes.')
+      console.log(
+        '  After limiter is installed, uncomment .use(authLimiter) / .use(accountLimiter) on sensitive routes.'
+      )
     }
     console.log('  1. Run migrations: node ace migration:run')
     console.log('  2. Listen for module events as needed')

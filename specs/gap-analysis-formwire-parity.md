@@ -78,42 +78,44 @@ This is an intentional design choice, not a gap.
 
 ---
 
-### Account module (`registry/account/`)
+### Account module (`registry/account/`) — stubs DONE
 
-#### Missing routes vs FormWire (`start/routes/account.ts`)
+Host HTTP surface is in `stubs/` (`adonia add account --with-stubs --with-routes`).
+Domain `AccountService` is unchanged; prefs/inbox use Lucid models in the stub
+controller. Auth middleware and `accountLimiter` are commented, same as auth.
+
+#### Routes vs FormWire (`start/routes/account.ts`)
 
 | Route | Adonia stub | FormWire | Notes |
 |-------|-------------|----------|-------|
-| `GET /user` | Missing | Present | getAuthenticatedUser |
-| `GET /notifications` | Missing | Present | Notification preferences |
-| `PUT /notifications` | Missing | Present | Update preferences |
-| `DELETE /account` | Missing | Present | Account deletion |
-| `GET /inbox` | Missing | Present | Inbox notifications |
-| `POST /inbox/read-all` | Missing | Present | Mark all read |
-| `PATCH /inbox/:id` | Missing | Present | Mark one read |
+| `GET /user` | Present | Present | `getAuthenticatedUser` |
+| `GET /notifications` | Present | Present | Notification preferences |
+| `PUT /notifications` | Present | Present | Update preferences |
+| `DELETE /account` | Present | Present | Account deletion |
+| `GET /inbox` | Present | Present | Inbox notifications |
+| `POST /inbox/read-all` | Present | Present | Mark all read |
+| `PATCH /inbox/:id` | Present | Present | Mark one read |
 
-Stub has 4 routes. FormWire has 9.
-
-#### Missing controller methods vs FormWire (`accounts_controller.ts`)
+#### Controller methods vs FormWire (`accounts_controller.ts`)
 
 | Method | Adonia stub | FormWire | Notes |
 |--------|-------------|----------|-------|
-| `getAuthenticatedUser` | Missing | Present | |
-| `getNotifications` | Missing | Present | |
-| `updateNotifications` | Missing | Present | |
-| `getInboxNotifications` | Missing | Present | |
-| `markNotificationRead` | Missing | Present | |
-| `markAllNotificationsRead` | Missing | Present | |
-| `deleteAccount` | Missing | Present | |
+| `getAuthenticatedUser` | Present | Present | |
+| `getNotifications` | Present | Present | Lucid User columns |
+| `updateNotifications` | Present | Present | Lucid User columns |
+| `getInboxNotifications` | Present | Present | Needs notification model stub |
+| `markNotificationRead` | Present | Present | Needs notification model stub |
+| `markAllNotificationsRead` | Present | Present | Needs notification model stub |
+| `deleteAccount` | Present | Present | Calls `AccountService.deleteAccount` |
 
-#### Missing validator vs FormWire
+#### Validators vs FormWire
 
 | Field | Adonia stub | FormWire | Notes |
 |-------|-------------|----------|-------|
-| Notification preferences | Not stubbed | `emailMarketing`, `emailProductUpdates`, `emailSecurityAlerts`, `emailWeeklyDigest` booleans | Missing entirely |
-| Password confirmation | Missing | `.confirmed()` on replacePassword | Missing confirmation field |
-| Email normalization | Missing | `.normalizeEmail()` on replaceEmail | Inconsistent casing |
-| Name constraints | `string().optional()` | `string().trim().maxLength(80).optional()` | Missing trim/maxLength |
+| Notification preferences | Present | Present | Four booleans, optional |
+| Password confirmation | Present | Present | `.confirmed()` on `newPassword` |
+| Email normalization | Present | Present | `.normalizeEmail()` on replaceEmail |
+| Name constraints | Present | Present | `trim().maxLength(80).optional()` |
 
 ---
 
@@ -134,11 +136,13 @@ Stub has 4 routes. FormWire has 9.
 
 | Limiter | FormWire | Adonia |
 |---------|----------|--------|
-| `authLimiter` (5 req/min) | On register, login, reset | Not provided |
-| `throttle` (60 req/min) | On all account routes | Not provided |
+| `authLimiter` (5 req/min) | On register, login, reset | Stub in `start/limiter.ts`; commented `.use(authLimiter)` |
+| `throttle` (60 req/min) | On all account routes | `accountLimiter` (60/min); commented `.use(accountLimiter)` |
 | `submitLimiter` (30 req/min/IP/form) | On public submission | Not provided |
 
-FormWire defines these in `start/limiter.ts`. Adonia does not provide limiter stubs.
+FormWire defines these in `start/limiter.ts`. Adonia ships `authLimiter`
+and `accountLimiter` in the auth start stub; `.use(...)` stays commented
+until the host runs `node ace add @adonisjs/limiter`.
 
 ### Notification wiring
 
@@ -196,8 +200,8 @@ These are FormWire product features, not generic Adonia modules:
 
 ## Recommended implementation order
 
-1. **Auth module stubs** — add missing routes (logout, validatePasswordReset, resendActivation), custom VineJS rules + provider, password confirmation, email normalization, rate limiting references
-2. **Account module stubs** — add missing routes (getAuthenticatedUser, notifications, inbox, deleteAccount), notification preferences validator, password confirmation
+1. **Auth module stubs** — DONE
+2. **Account module stubs** — DONE
 3. **Add `list` and `--dry-run` tests** — quick wins for coverage
 4. **Add `--with-tests` and `check --strict` tests** — validates existing behavior
 5. **Update cli-hardening.md spec** — mark all items as done

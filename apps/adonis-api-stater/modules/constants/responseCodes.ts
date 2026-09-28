@@ -58,6 +58,30 @@ export const responseCodes = {
     status: 200,
     code: 'M_ACCOUNT_DELETED',
   },
+  USER_SHOW: {
+    status: 200,
+    code: 'M_USER_SHOW',
+  },
+  NOTIFICATIONS_FETCHED: {
+    status: 200,
+    code: 'M_NOTIFICATIONS_FETCHED',
+  },
+  NOTIFICATIONS_UPDATED: {
+    status: 200,
+    code: 'M_NOTIFICATIONS_UPDATED',
+  },
+  INBOX_FETCHED: {
+    status: 200,
+    code: 'M_INBOX_FETCHED',
+  },
+  INBOX_MARKED_READ: {
+    status: 200,
+    code: 'M_INBOX_MARKED_READ',
+  },
+  INBOX_MARKED_ALL_READ: {
+    status: 200,
+    code: 'M_INBOX_MARKED_ALL_READ',
+  },
 } as const satisfies Record<string, StatusCodeEntry>
 
 export type ResponseCodeKey = keyof typeof responseCodes
