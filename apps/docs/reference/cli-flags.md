@@ -74,8 +74,9 @@ These flags are on [`check`](../cli/check.md) only.
 
 ## Next steps
 
-Return to a command page, or the module catalog:
+Return to a command page, or the other reference files:
 
 1. [CLI overview](../cli/overview.md)
-2. [`add`](../cli/add.md) for the copy pipeline
-3. [Modules overview](../modules/overview.md)
+2. [`adonia.json`](./adonia-json.md) and
+   [`module.json`](./module-json.md)
+3. [`add`](../cli/add.md) for the copy pipeline
