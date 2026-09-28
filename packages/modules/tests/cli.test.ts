@@ -141,6 +141,58 @@ describe('adonia CLI', () => {
     )
   })
 
+  it('list without adonia.json shows the registry only', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    const r = run(['list'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    const out = r.stdout + r.stderr
+    assert.ok(/no adonia\.json/i.test(out), out)
+    assert.ok(/Registry \(flag\)/.test(out), out)
+    assert.match(out, /api\s+\[available\]/)
+    assert.match(out, /auth\s+\[available\]/)
+    assert.ok(!/formwire/i.test(out), out)
+  })
+
+  it('list reflects installed vs available after init and add', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const afterInit = run(['list'], host)
+    assert.equal(afterInit.status, 0, afterInit.stderr + afterInit.stdout)
+    const initOut = afterInit.stdout + afterInit.stderr
+    assert.match(initOut, /api\s+\[installed\]/)
+    assert.match(initOut, /types\s+\[installed\]/)
+    assert.match(initOut, /auth\s+\[available\]/)
+    assert.match(initOut, /account\s+\[available\]/)
+    assert.equal(run(['add', 'auth'], host).status, 0)
+    const afterAdd = run(['list'], host)
+    assert.equal(afterAdd.status, 0, afterAdd.stderr + afterAdd.stdout)
+    const addOut = afterAdd.stdout + afterAdd.stderr
+    assert.match(addOut, /auth\s+\[installed\]/)
+    assert.match(addOut, /account\s+\[available\]/)
+    assert.ok(!/formwire/i.test(addOut), addOut)
+  })
+
+  it('init --dry-run writes nothing', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    const pkgBefore = readFileSync(join(host, 'package.json'), 'utf8')
+    const adonisrcBefore = readFileSync(join(host, 'adonisrc.ts'), 'utf8')
+    const kernelBefore = readFileSync(join(host, 'start/kernel.ts'), 'utf8')
+    const r = run(['init', '--wire', '--dry-run'], host)
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    const out = r.stdout + r.stderr
+    assert.ok(/Would write adonia\.json/.test(out), out)
+    assert.ok(/Would wire/.test(out), out)
+    assert.ok(/would-copy/.test(out), out)
+    assert.ok(!existsSync(join(host, 'adonia.json')))
+    assert.ok(!existsSync(join(host, 'modules/api')))
+    assert.equal(readFileSync(join(host, 'package.json'), 'utf8'), pkgBefore)
+    assert.equal(readFileSync(join(host, 'adonisrc.ts'), 'utf8'), adonisrcBefore)
+    assert.equal(readFileSync(join(host, 'start/kernel.ts'), 'utf8'), kernelBefore)
+  })
+
   it('add auth installs module files without stubs by default', () => {
     const host = mkdtempSync(join(tmpdir(), 'adonia-'))
     fakeAdonis(host)
@@ -161,6 +213,36 @@ describe('adonia CLI', () => {
     assert.ok(installed.includes('api'))
     const out = r.stdout + r.stderr
     assert.ok(/--with-stubs/.test(out), out)
+  })
+
+  it('add --dry-run does not copy files, stubs, or mark installed', () => {
+    const host = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(host)
+    assert.equal(run(['init', '--wire'], host).status, 0)
+    const installedBefore = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8'))
+      .installed as string[]
+    const modulesConfigBefore = readFileSync(join(host, 'config/modules.ts'), 'utf8')
+    const routesBefore = readFileSync(join(host, 'start/routes.ts'), 'utf8')
+    const r = run(
+      ['add', 'auth', '--dry-run', '--with-stubs', '--with-routes', '--wire-routes'],
+      host
+    )
+    assert.equal(r.status, 0, r.stderr + r.stdout)
+    const out = r.stdout + r.stderr
+    assert.ok(/would-copy/.test(out), out)
+    assert.ok(/would process/.test(out), out)
+    assert.ok(/Would wire routes/.test(out), out)
+    assert.ok(!existsSync(join(host, 'modules/auth/service.ts')))
+    assert.ok(!existsSync(join(host, 'app/models/user.ts')))
+    assert.ok(!existsSync(join(host, 'app/controllers/auth_controller.ts')))
+    assert.ok(!existsSync(join(host, 'start/routes/auth.ts')))
+    assert.ok(!existsSync(join(host, 'start/limiter.ts')))
+    assert.equal(readFileSync(join(host, 'start/routes.ts'), 'utf8'), routesBefore)
+    assert.equal(readFileSync(join(host, 'config/modules.ts'), 'utf8'), modulesConfigBefore)
+    const installedAfter = JSON.parse(readFileSync(join(host, 'adonia.json'), 'utf8'))
+      .installed as string[]
+    assert.deepEqual(installedAfter, installedBefore)
+    assert.ok(!installedAfter.includes('auth'))
   })
 
   it('add auth --with-stubs copies models and controllers', () => {

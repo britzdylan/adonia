@@ -163,8 +163,8 @@ Adonia does not provide health check setup.
 
 | Area | Covered | Gap |
 |------|---------|-----|
-| `list` command | No | Not tested at all |
-| `--dry-run` flag | No | Not tested on any command |
+| `list` command | Yes | `cli.test.ts` list without config + after init/add |
+| `--dry-run` flag | Yes | `init --dry-run` and `add --dry-run` write nothing |
 | `--with-tests` flag | No | Not tested |
 | npm dependency installation | No | `installNpmDeps()` not tested |
 | Env key reporting | No | Missing env key output not tested |
@@ -202,7 +202,7 @@ These are FormWire product features, not generic Adonia modules:
 
 1. **Auth module stubs** — DONE
 2. **Account module stubs** — DONE
-3. **Add `list` and `--dry-run` tests** — quick wins for coverage
+3. **Add `list` and `--dry-run` tests** — DONE
 4. **Add `--with-tests` and `check --strict` tests** — validates existing behavior
 5. **Update cli-hardening.md spec** — mark all items as done
 6. **Add CHANGELOG entry** — document breaking change (stub default inverted, `--skip-stubs` removed)
