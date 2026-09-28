@@ -15,6 +15,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: npm run build -w docs
       - run: npm run sync-registry
       - run: npm test -w adonia
       - name: Fixture typecheck

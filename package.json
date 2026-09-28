@@ -20,6 +20,9 @@
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "sync-registry": "npm run sync-registry -w adonia",
+    "docs:dev": "npm run dev -w docs",
+    "docs:build": "npm run build -w docs",
+    "docs:preview": "npm run preview -w docs",
     "build:test-app": "cd apps && npm create adonisjs@latest adonis-test-app -- --kit=api",
     "clean:test-app": "rm -rf apps/adonis-test-app"
   },
