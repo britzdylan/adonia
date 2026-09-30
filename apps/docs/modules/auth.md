@@ -6,7 +6,7 @@ per-request `SessionManager`. HTTP, Lucid, and Vine stay in host
 adapters and optional stubs.
 
 This page covers the service API, the contracts you must implement,
-events, tokens, and the stub kit (`--with-adapters`, `--with-stubs`,
+events, tokens, and the optional stubs (`--with-adapters`, `--with-stubs`,
 `--with-routes`).
 
 ## Add it

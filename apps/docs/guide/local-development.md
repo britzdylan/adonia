@@ -45,7 +45,8 @@ npm run docs:dev
 ```
 
 `npm test -w adonia` syncs the registry, builds the CLI, and runs
-the CLI tests. Tests spawn `build/cli.js`, so a stale build lies.
+the CLI tests. Tests spawn `build/cli.js`, so run them against a
+fresh build.
 
 ## Point add at the fixture
 

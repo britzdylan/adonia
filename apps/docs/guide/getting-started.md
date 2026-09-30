@@ -55,7 +55,7 @@ does **not** copy Lucid models or routes:
 npx adonia add auth
 ```
 
-`add` also installs core if it weren't already there, merges
+`add` also installs core if it is not already there, merges
 `Auth:*` events into `config/modules.ts`, and records `auth` in
 `adonia.json` `installed`.
 
@@ -104,7 +104,7 @@ directories or missing packages stay exit 0 unless you pass `--strict`.
 
 ## Next steps
 
-Go incremental, or take the full kit:
+Add one module at a time, or copy the whole registry:
 
 1. Read [concepts](./concepts.md) so domain, stubs, and events stay
    distinct.

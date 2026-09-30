@@ -1,15 +1,15 @@
 # adonia
 
-Adonia is a CLI that scaffolds a registry of AdonisJS modules for rapid API development.
+A CLI that copies AdonisJS modules from a registry into your app.
 
-Adonia is a registry of AdonisJS modules and a CLI that copies them
-into an existing app. `adonia add auth` copies the auth service, its
-contracts, and a manifest into `modules/auth`. Those files are
-ordinary source in the host. `diff` compares them with the registry,
-and `add --overwrite` puts the registry copy back. A plain `add`
-copies only that domain slice. Models, migrations, controllers,
-adapters, and routes are separate flags, because they have to match
-the app they land in.
+The registry holds the modules an API is built from: auth, account,
+notification, Creem billing, and subscription, plus a shared API core.
+`adonia add auth` copies the auth service, its contracts, and a
+manifest into `modules/auth`. Those files are ordinary source in the
+host. `diff` compares them with the registry, and `add --overwrite`
+puts the registry version back. A plain `add` copies only that domain
+slice. Models, migrations, controllers, adapters, and routes are
+separate flags, because they have to match the app they land in.
 
 **Requirements:** Node.js 20+, an AdonisJS app (`adonisrc.ts` and
 `@adonisjs/core`).
@@ -35,7 +35,7 @@ Plain `add` copies the domain slice under `modules/` only. Models,
 migrations, controllers, validators, adapters, and routes are
 opt-in.
 
-Full kit in one step:
+Every module in one command:
 
 ```bash
 npx adonia init --scaffold
@@ -92,10 +92,10 @@ are missing.
 
 `--with-stubs` does not copy routes. Combine with `--with-routes`.
 
-Adonis kits used by stubs (`@adonisjs/mail`, `@adonisjs/drive`,
+Adonis packages used by stubs (`@adonisjs/mail`, `@adonisjs/drive`,
 `@adonisjs/limiter`) are not installed for you. `add` and `check`
 print `node ace add @adonisjs/<pkg>` when a copied stub needs a
-missing kit.
+missing package.
 
 ## Shared flags
 

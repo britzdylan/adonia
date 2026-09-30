@@ -82,7 +82,7 @@ describe('adonia CLI', () => {
       r.stdout
         .replace(/\s+/g, ' ')
         .includes(
-          'A CLI that scaffolds AdonisJS modules from a registry into your app.'
+          'A CLI that copies AdonisJS modules from a registry into your app.'
         )
     )
     assert.ok(r.stdout.includes('adonia'))

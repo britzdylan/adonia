@@ -13,7 +13,7 @@ const program = new Command()
 
 program
   .name('adonia')
-  .description('Adonia is a CLI that scaffolds a registry of AdonisJS modules for rapid API development.')
+  .description('A CLI that copies AdonisJS modules from a registry into your app.')
   .version(packageVersion())
 
 function shared(cmd: Command): SharedFlags {

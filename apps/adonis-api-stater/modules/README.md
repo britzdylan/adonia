@@ -10,7 +10,7 @@ npx adonia@latest add auth
 npx adonia@latest add auth --with-adapters
 npx adonia@latest add auth --with-stubs
 npx adonia@latest add auth --with-routes --wire-routes
-# or full kit:
+# or every module:
 npx adonia@latest init --scaffold
 ```
 

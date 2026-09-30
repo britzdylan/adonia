@@ -2,15 +2,15 @@
 
 Scaffolding is `npx adonia init --scaffold`: wire the host, install
 core, then copy **every** feature module in the registry with stubs
-and routes. It is the fast path when you want the full bundled kit
-on a new Adonis app.
+and routes. Use it when you want every feature module, with stubs
+and routes, on a new Adonis app.
 
 This page compares that path to incremental [`add`](../cli/add.md),
 lists what lands on disk, and notes Adonis packages the stubs need.
 
 ## Incremental add versus scaffold
 
-Incremental install is the default story in
+Incremental install is the path in
 [getting started](./getting-started.md): `init --wire`, then `add`
 one name at a time, with only the `--with-*` flags you want.
 

@@ -81,7 +81,7 @@ tree that already has `modules/`.
 
 ## Scaffold
 
-`--scaffold` is the full-kit path:
+`--scaffold` copies every feature module with stubs and routes:
 
 1. Enable `--wire` if you didn't pass it.
 2. Install core unless `--skip-core`.

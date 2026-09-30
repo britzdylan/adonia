@@ -87,7 +87,7 @@ Other modules follow the same pattern: `PasswordResetStore`,
 `AvatarStorage`, `MailTransport`, `CreemClient`,
 `SubscriptionStore`. The host supplies implementations.
 
-## Copy policy in one line
+## Copy policy
 
 Identical files are skipped. Differing files conflict unless you
 pass `--overwrite`. A module is recorded in `installed` only when

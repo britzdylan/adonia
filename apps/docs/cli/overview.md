@@ -50,8 +50,8 @@ npx adonia add auth --with-routes --wire-routes
 npx adonia check
 ```
 
-`init --scaffold` is the all-in shortcut: wire the host, copy core,
-then add every feature module with stubs and routes. See
+`init --scaffold` wires the host, copies core, then adds every
+feature module with stubs and routes. See
 [`init`](./init.md#scaffold).
 
 ## Shared flags
@@ -97,7 +97,7 @@ node packages/modules/build/cli.js add auth \
 ```
 
 `adonia list` prints `Registry (flag):` or `Registry (bundled):`
-plus the resolved root so you can confirm which tree you hit.
+plus the resolved root so you can confirm which registry the CLI used.
 
 ## Host config
 

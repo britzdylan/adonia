@@ -6,7 +6,7 @@ password change, and account deletion. It reuses the shared
 port for file cleanup.
 
 This page covers the service API, email-change tokens, avatar
-cleanup, events, and the stub kit. Inbox and marketing-preference
+cleanup, events, and the optional stubs. Inbox and marketing-preference
 HTTP endpoints in the example controller are host-owned; they are
 not methods on `AccountService`.
 
@@ -124,8 +124,8 @@ deletes the user row, and emits `Account:DeleteAccount` with
 ## Contracts you must implement
 
 Skip `--with-adapters` only when you provide these ports yourself.
-Account reuses auth's Lucid user store when you copy both adapter
-kits.
+Account reuses auth's Lucid user store when you copy both sets of
+adapters.
 
 ### UserStore
 

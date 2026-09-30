@@ -1,6 +1,6 @@
 # Host wiring
 
-Host wiring is the Adonis-side glue Adonia needs: import aliases,
+Host wiring is the Adonis setup Adonia needs: import aliases,
 the API provider, the JSON exception handler, and
 `config/modules.ts`. Domain files under `modules/` do not boot
 those pieces by themselves.
