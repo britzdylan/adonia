@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: pages-${{ github.workflow }}-${{ github.ref }}
+  group: docs-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,18 +26,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run docs:build
-      - name: Deploy to Cloudflare Pages
-        if: env.HAS_CLOUDFLARE_TOKEN == 'true'
+      - name: Deploy to Cloudflare Workers
+        if: env.HAS_CLOUDFLARE_TOKEN == 'true' && github.event_name != 'pull_request'
         id: deploy
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/docs/.vitepress/dist --project-name=adonia-docs
+          command: deploy
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           packageManager: npm
       - name: Skip deploy without Cloudflare secrets
-        if: env.HAS_CLOUDFLARE_TOKEN != 'true'
+        if: env.HAS_CLOUDFLARE_TOKEN != 'true' && github.event_name != 'pull_request'
         run: |
           echo "Set GitHub secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to deploy."
-          echo "Token needs Cloudflare Pages Edit. Do not also connect this repo in the Cloudflare Git build UI."
+          echo "Token needs Edit Cloudflare Workers. Do not also enable Workers Builds on this repo."

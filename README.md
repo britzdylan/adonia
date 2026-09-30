@@ -11,7 +11,7 @@ the AdonisJS 7 fixture app (`apps/adonis-api-stater`).
 adonia/
   packages/modules/          # npm package "adonia" (CLI + bundled registry)
   apps/adonis-api-stater/    # authoring fixture (module sources live here)
-  apps/docs/                 # VitePress site (Cloudflare Pages)
+  apps/docs/                 # VitePress site (Cloudflare Workers)
 ```
 
 Author modules under `apps/adonis-api-stater/modules/`, then:
@@ -61,15 +61,16 @@ npm run docs:dev
 npm run docs:build
 ```
 
-Pushes to `main` and pull requests deploy to Cloudflare Pages via
-`.github/workflows/docs.yml` (Direct Upload). Set repository secrets:
+Pushes to `main` deploy the VitePress build to a Cloudflare Worker via
+`.github/workflows/docs.yml`. Pull requests build only. Set repository
+secrets:
 
-- `CLOUDFLARE_API_TOKEN` — API token with **Cloudflare Pages Edit**
+- `CLOUDFLARE_API_TOKEN` — API token with **Edit Cloudflare Workers**
 - `CLOUDFLARE_ACCOUNT_ID` — account id from the Cloudflare dashboard
 
-The first deploy creates the `adonia-docs` Pages project. Do not also
-enable Cloudflare's Git-connected build for this repo, or you will
-double-deploy. Production is `https://adonia-docs.pages.dev`.
+The first `wrangler deploy` creates the `adonia-docs` Worker. Do not
+also enable Cloudflare Workers Builds on this repo, or you will
+double-deploy. Wrangler prints the `workers.dev` URL on deploy.
 
 ## License
 

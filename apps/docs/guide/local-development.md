@@ -115,8 +115,8 @@ npm run docs:dev
 npm run docs:build
 ```
 
-Production deploys to Cloudflare Pages from GitHub Actions. You do
-not run Wrangler locally unless you are testing Direct Upload.
+Production deploys to a Cloudflare Worker from GitHub Actions. You do
+not run Wrangler locally unless you are testing the docs Worker.
 
 Guide, CLI, and module pages live next to each other under
 `apps/docs/`. Match existing voice and 80-character wrap when you
