@@ -78,7 +78,13 @@ describe('adonia CLI', () => {
   it('help has no FormWire product strings', () => {
     const r = spawnSync(process.execPath, [cli, '--help'], { encoding: 'utf8' })
     assert.equal(r.status, 0)
-    assert.ok(r.stdout.includes('Adonia'))
+    assert.ok(
+      r.stdout
+        .replace(/\s+/g, ' ')
+        .includes(
+          'A CLI that scaffolds AdonisJS modules from a registry into your app.'
+        )
+    )
     assert.ok(r.stdout.includes('adonia'))
     const productText = r.stdout
       .split('\n')

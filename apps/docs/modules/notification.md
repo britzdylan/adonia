@@ -26,7 +26,7 @@ notification model.
 
 `--with-adapters` copies `AdonisMailTransport`, which needs
 `@adonisjs/mail`. `add` prints `node ace add @adonisjs/mail` when
-that kit is missing.
+that package is missing.
 
 The module declares no env keys, config keys, or events.
 

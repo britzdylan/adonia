@@ -6,7 +6,7 @@ and routes. It is the fast path when you want the full bundled kit
 on a new Adonis app.
 
 This page compares that path to incremental [`add`](../cli/add.md),
-lists what lands on disk, and notes Adonis kits the stubs need.
+lists what lands on disk, and notes Adonis packages the stubs need.
 
 ## Incremental add versus scaffold
 
@@ -52,13 +52,13 @@ do not get a `start/routes/<name>.ts` file.
 Auth middleware and limiter `.use(…)` calls on those example
 routes stay commented out until you enable them.
 
-## Adonis kits
+## Adonis packages
 
 Scaffold does not run `node ace add` for you. Copied stubs import
-real kits:
+these packages:
 
-| Kit | Typical stub |
-|-----|----------------|
+| Package | Typical stub |
+|---------|----------------|
 | `@adonisjs/limiter` | `start/limiter.ts` (auth and account routes) |
 | `@adonisjs/drive` | `app/adapters/drive_avatar_storage.ts` |
 | `@adonisjs/mail` | `app/adapters/adonis_mail_transport.ts` |
@@ -85,9 +85,9 @@ Command-level flags and edge cases: [`init`](../cli/init.md#scaffold).
 
 ## Next steps
 
-After scaffold, finish host HTTP and kits:
+After scaffold, finish host HTTP and packages:
 
-1. Run `node ace add` for each printed Adonis kit.
+1. Run `node ace add` for each printed Adonis package.
 2. Run `node ace migration:run`.
 3. Register `providers/vine_provider.ts` in `adonisrc.ts` if it
    isn't already.

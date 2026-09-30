@@ -1,10 +1,15 @@
 # adonia
 
-AdonisJS modules you add with a CLI, not a starter kit.
+Adonia is a CLI that scaffolds a registry of AdonisJS modules for rapid API development.
 
-Copy domain slices (auth, account, notifications, Creem billing)
-into an existing AdonisJS 7 app. Files land in your repo. You own
-them after that.
+Adonia is a registry of AdonisJS modules and a CLI that copies them
+into an existing app. `adonia add auth` copies the auth service, its
+contracts, and a manifest into `modules/auth`. Those files are
+ordinary source in the host. `diff` compares them with the registry,
+and `add --overwrite` puts the registry copy back. A plain `add`
+copies only that domain slice. Models, migrations, controllers,
+adapters, and routes are separate flags, because they have to match
+the app they land in.
 
 **Requirements:** Node.js 20+, an AdonisJS app (`adonisrc.ts` and
 `@adonisjs/core`).

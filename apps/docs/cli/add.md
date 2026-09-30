@@ -103,7 +103,7 @@ Wiring is idempotent: if `start/routes.ts` already imports
 
 <!-- prettier-ignore -->
 > [!IMPORTANT]
-> Adonis kits used by stubs are not stubbed with no-ops. When a
+> Adonis packages used by stubs are not stubbed with no-ops. When a
 > copied file needs `@adonisjs/limiter`, `@adonisjs/drive`, or
 > `@adonisjs/mail` and that package is missing, `add` prints
 > `node ace add @adonisjs/<pkg>`. The warning is tied to the stub

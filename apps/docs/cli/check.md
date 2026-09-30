@@ -56,7 +56,7 @@ exits 0 and prints `check passed` or
 - `adonisrc.ts` does not mention `#modules/api/provider`.
 - `start/kernel.ts` does not mention
   `#modules/api/exception_handler`.
-- An Adonis kit is missing while a stub that needs it is present
+- An Adonis package is missing while a stub that needs it is present
   (`@adonisjs/limiter` with `start/limiter.ts`, `@adonisjs/drive`
   with `app/adapters/drive_avatar_storage.ts`, `@adonisjs/mail`
   with `app/adapters/adonis_mail_transport.ts`). The text includes

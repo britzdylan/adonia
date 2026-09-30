@@ -86,8 +86,8 @@ node ace migration:run
 ```
 
 Stubs that import `@adonisjs/limiter` print
-`node ace add @adonisjs/limiter` when that kit is missing. Run the
-printed command; Adonia does not install Adonis kits for you.
+`node ace add @adonisjs/limiter` when that package is missing. Run the
+printed command; Adonia does not install those packages for you.
 
 ## Validate
 
@@ -100,7 +100,7 @@ npx adonia check
 
 Fix errors (missing folders, missing peer models, missing
 `registryDependencies` in `installed`). Warnings about empty `paths`
-directories or missing kits stay exit 0 unless you pass `--strict`.
+directories or missing packages stay exit 0 unless you pass `--strict`.
 
 ## Next steps
 

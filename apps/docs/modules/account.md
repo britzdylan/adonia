@@ -25,7 +25,7 @@ npx adonia add account --with-routes --wire-routes
 The host must provide `APP_KEY` (encryption for pending-email
 tokens). `--with-adapters` copies `DriveAvatarStorage`, which needs
 `@adonisjs/drive`. `add` prints `node ace add @adonisjs/drive` when
-that kit is missing.
+that package is missing.
 
 The Lucid factory imports `#adapters/lucid_user_store`. Copy auth
 adapters before or together with account adapters.

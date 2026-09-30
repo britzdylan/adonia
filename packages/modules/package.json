@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "type": "module",
-  "description": "Adonia modules for AdonisJS \u2014 CLI and bundled registry",
+  "description": "A CLI that scaffolds AdonisJS modules from a registry into your app.",
   "bin": {
     "adonia": "./build/cli.js"
   },

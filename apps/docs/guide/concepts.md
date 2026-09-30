@@ -39,7 +39,7 @@ and where they land (`app/models`, `app/adapters`,
 `start/routes`, and so on). See
 [how add copies a module](../modules/overview.md#how-add-copies-a-module).
 
-An **adapter** implements a contract with a concrete kit (Lucid
+An **adapter** implements a contract with a concrete package (Lucid
 user store, `creem_io` client, Adonis Mail). Factories such as
 `createAuthService()` live in `app/adapters/` and import as
 `#adapters/auth`.

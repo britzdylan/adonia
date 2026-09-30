@@ -1,12 +1,37 @@
 # What is Adonia
 
-Adonia is a library of AdonisJS modules you copy into an existing
-app with a CLI. You add the slices you need. You don't replace your
-app with a starter kit.
+Adonia is a CLI that scaffolds a registry of AdonisJS modules for rapid
+API development.
 
-This page is the product picture: what Adonia copies, what it leaves
-to you, and how that differs from generating a whole API from a
-template.
+The examples below create an AdonisJS API app and scaffold a module into
+it. The rest of this page covers what that scaffold includes, what stays
+in the host, and how a module install differs from generating an app
+from a template.
+
+## Try it
+
+Create an AdonisJS API app, then scaffold the auth module into it:
+
+```bash
+npm create adonisjs@latest my-api -- --kit=api
+cd my-api
+npx adonia@latest init --wire
+npx adonia@latest add auth
+```
+
+`init --wire` writes `adonia.json`, copies the shared API core, and
+wires the host. `add auth` copies the auth service, its contracts, and
+a manifest into `modules/auth`.
+
+To scaffold every module in the registry, with stubs and routes, run
+this instead of `init --wire` and `add`:
+
+```bash
+npx adonia@latest init --scaffold
+```
+
+The flag list, peer models, and `check` are in
+[getting started](./getting-started.md).
 
 ## Modules you own
 

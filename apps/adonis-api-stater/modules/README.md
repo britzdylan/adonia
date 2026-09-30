@@ -49,9 +49,9 @@ Each feature module (and `api`) ships a manifest:
   them. `--with-adapters` copies Lucid/SDK adapters to `app/adapters/`.
   `--with-controllers` and `--with-stubs` imply adapters. `--with-validators`
   also copies `providers/`; `--with-routes` and `--with-stubs` also copy
-  `start/` (limiter example). Adonis kits (`@adonisjs/mail`,
+  `start/` (limiter example). Adonis packages (`@adonisjs/mail`,
   `@adonisjs/drive`, `@adonisjs/limiter`) are not stubbed with no-ops.
-  `add` and `check` warn when a copied stub needs a kit that is missing
+  `add` and `check` warn when a copied stub needs a package that is missing
   from `package.json` and print `node ace add @adonisjs/<pkg>`.
 - **dependencies** — npm packages this module imports.
 - **registryDependencies** — other modules that must already be present.

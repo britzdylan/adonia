@@ -100,10 +100,10 @@ Pass `--overwrite` to recopy.
 <!-- prettier-ignore -->
 > [!IMPORTANT]
 > Scaffold copies Lucid models, adapters, and example routes into
-> the host. Adonis kits those stubs import (`@adonisjs/mail`,
+> the host. Adonis packages those stubs import (`@adonisjs/mail`,
 > `@adonisjs/drive`, `@adonisjs/limiter`) are not installed for
 > you. `add` prints `node ace add @adonisjs/<pkg>` when a copied
-> stub needs a missing kit.
+> stub needs a missing package.
 
 ## Flags
 

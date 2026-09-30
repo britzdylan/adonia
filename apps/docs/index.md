@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: Adonia
-  tagline: AdonisJS modules you add with a CLI, not a starter kit.
+  tagline: Adonia is a CLI that scaffolds a registry of AdonisJS modules for rapid API development.
   actions:
     - theme: brand
       text: Getting started
