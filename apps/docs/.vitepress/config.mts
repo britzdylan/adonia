@@ -3,6 +3,11 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Adonia',
   description: 'AdonisJS modules you add with a CLI, not a starter kit.',
+  vite: {
+    ssr: {
+      noExternal: ['vitepress-carbon'],
+    },
+  },
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide/what-is-adonia' },

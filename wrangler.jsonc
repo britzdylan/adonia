@@ -1,0 +1,4 @@
+{
+  "name": "adonia-docs",
+  "pages_build_output_dir": "apps/docs/.vitepress/dist"
+}

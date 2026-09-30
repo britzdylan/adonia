@@ -115,6 +115,9 @@ npm run docs:dev
 npm run docs:build
 ```
 
+Production deploys to Cloudflare Pages from GitHub Actions. You do
+not run Wrangler locally unless you are testing Direct Upload.
+
 Guide, CLI, and module pages live next to each other under
 `apps/docs/`. Match existing voice and 80-character wrap when you
 edit them.

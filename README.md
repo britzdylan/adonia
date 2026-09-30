@@ -11,6 +11,7 @@ the AdonisJS 7 fixture app (`apps/adonis-api-stater`).
 adonia/
   packages/modules/          # npm package "adonia" (CLI + bundled registry)
   apps/adonis-api-stater/    # authoring fixture (module sources live here)
+  apps/docs/                 # VitePress site (Cloudflare Pages)
 ```
 
 Author modules under `apps/adonis-api-stater/modules/`, then:
@@ -50,6 +51,25 @@ node packages/modules/build/cli.js add auth \
   --cwd /tmp/some-host \
   --registry apps/adonis-api-stater/modules
 ```
+
+## Docs site
+
+VitePress lives in `apps/docs`. Local:
+
+```bash
+npm run docs:dev
+npm run docs:build
+```
+
+Pushes to `main` and pull requests deploy to Cloudflare Pages via
+`.github/workflows/docs.yml` (Direct Upload). Set repository secrets:
+
+- `CLOUDFLARE_API_TOKEN` — API token with **Cloudflare Pages Edit**
+- `CLOUDFLARE_ACCOUNT_ID` — account id from the Cloudflare dashboard
+
+The first deploy creates the `adonia-docs` Pages project. Do not also
+enable Cloudflare's Git-connected build for this repo, or you will
+double-deploy. Production is `https://adonia-docs.pages.dev`.
 
 ## License
 
