@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.2.2 (2026-10-01)
+
+### Added
+
+- add rate limiting configuration to adonis-api-stater
+
 ## 0.2.1 (2026-10-01)
 
 ### Added
