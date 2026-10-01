@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/adonia/schema/adonia.schema.json",
+  "registry": "bundled",
+  "ref": "0.2.0",
+  "paths": {
+    "modules": "modules",
+    "models": "app/models",
+    "migrations": "database/migrations",
+    "controllers": "app/controllers",
+    "validators": "app/validators"
+  },
+  "aliases": {
+    "modules": "#modules",
+    "constants": "#constants",
+    "models": "#models"
+  },
+  "installed": [
+    "types",
+    "constants",
+    "contracts",
+    "api",
+    "account",
+    "notification",
+    "creem",
+    "subscription"
+  ]
+}

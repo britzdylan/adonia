@@ -35,3 +35,5 @@ router
       .use(middleware.auth())
   })
   .prefix('/api/v1')
+import './routes/auth.js'
+import './routes/account.js'
