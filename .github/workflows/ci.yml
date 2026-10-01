@@ -19,6 +19,4 @@ jobs:
       - run: npm run sync-registry
       - run: npm test -w adonia
       - name: Fixture typecheck
-        run: |
-          npm ci --prefix apps/adonis-api-stater || npm install --prefix apps/adonis-api-stater
-          npm run typecheck --prefix apps/adonis-api-stater
+        run: npm run typecheck -w adonis-api-stater

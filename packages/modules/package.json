@@ -5,7 +5,7 @@
   "type": "module",
   "description": "A CLI that copies AdonisJS modules from a registry into your app.",
   "bin": {
-    "adonia": "./build/cli.js"
+    "adonia": "build/cli.js"
   },
   "exports": {
     ".": "./build/cli.js",
