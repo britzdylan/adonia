@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 (2026-10-01)
+
 ### Breaking
 
 - `adonia add` no longer copies host stubs (`models`, `migrations`,
@@ -38,6 +40,14 @@
   `DELETE /account`; Vine confirmation, `normalizeEmail`, name
   trim/maxLength, and `updateNotificationsValidator`. `accountLimiter`
   (60/min) lives next to `authLimiter` in `start/limiter.ts`.
+- add release script and update publish workflow
+- refine documentation for Adonia CLI and modules
+- update documentation and deployment configuration for Cloudflare Workers
+- update GitHub Actions workflow for Cloudflare deployment
+- integrate VitePress Carbon theme for documentation site
+- refine documentation for Adonia CLI and modules
+- update documentation for Adonia CLI and modules
+- enhance README documentation for Adonia CLI
 
 ### Changed
 
