@@ -20,6 +20,7 @@
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "sync-registry": "npm run sync-registry -w adonia",
+    "release": "node scripts/release.mjs",
     "docs:dev": "npm run dev -w docs",
     "docs:build": "npm run build -w docs",
     "docs:preview": "npm run preview -w docs",
