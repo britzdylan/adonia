@@ -3,10 +3,11 @@
  * Requires `@adonisjs/drive` (`node ace add @adonisjs/drive`).
  */
 import drive from '@adonisjs/drive/services/main'
+import type { DriveDisks } from '@adonisjs/drive/types'
 import type { AvatarStorage } from '#modules/account/contracts/index'
 
 export class DriveAvatarStorage implements AvatarStorage {
-  constructor(private diskName?: string) {}
+  constructor(private diskName?: keyof DriveDisks) {}
 
   async delete(key: string): Promise<void> {
     const disk = this.diskName ? drive.use(this.diskName) : drive.use()

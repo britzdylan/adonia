@@ -19,6 +19,7 @@
     "constants",
     "contracts",
     "api",
+    "auth",
     "account",
     "notification",
     "creem",
