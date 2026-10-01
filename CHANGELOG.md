@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.2.3 (2026-10-01)
+
+### Fixed
+
+- skip prepack scripts during npm pack in smoke tests
+
 ## 0.2.2 (2026-10-01)
 
 ### Added
