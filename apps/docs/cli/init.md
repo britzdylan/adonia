@@ -1,12 +1,7 @@
 # init
 
-`init` prepares an AdonisJS app to receive Adonia modules. It writes
-`adonia.json` when that file is missing, copies the shared API core
-into `modules/`, and optionally wires import aliases, the API
-provider, and the exception handler.
-
-This page covers the Adonis-app check, `--wire`, `--skip-core`, and
-`--scaffold`.
+`init` writes `adonia.json`, copies the shared API core into
+`modules/`, and optionally wires the host.
 
 ## Run it
 
@@ -120,11 +115,5 @@ Without `--yes` and without `--dry-run`, `init` prints
 `Install shared API core into ./modules? (yes)` and continues. It
 does not wait for an answer.
 
-## Next steps
-
-Add a feature module, or inspect what landed:
-
-1. Run [`add`](./add.md) for a slice such as `auth`.
-2. Confirm names with [`list`](./list.md).
-3. Read the [modules overview](../modules/overview.md) for what
-   each slice contains.
+See [`add`](./add.md) and [`list`](./list.md). Why you wire a host
+is in [host wiring](../guide/host-wiring.md).

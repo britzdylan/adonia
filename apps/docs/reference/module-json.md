@@ -2,12 +2,9 @@
 
 `module.json` is the per-module manifest in the registry. `add`,
 `diff`, and `check` parse it with Zod (`moduleManifestSchema`).
-Each feature folder (and `api`) ships one file next to its
-service. Core packages `types`, `constants`, and `contracts` have
-**no** `module.json`; the CLI synthesizes a manifest for them.
-
-This page is the field catalog, how copy globs work, and which
-fields `check` actually enforces.
+Each feature folder (and `api`) ships one. Core packages `types`,
+`constants`, and `contracts` have no file; the CLI synthesizes a
+manifest.
 
 ## Where it lives
 
@@ -210,11 +207,5 @@ Trimmed from the bundled `auth` manifest:
 Author a new folder the same way, then list it in `registry.json`.
 See [local development](../guide/local-development.md).
 
-## Next steps
-
-Wire fields to commands and slices:
-
-1. [`adonia.json`](./adonia-json.md) for host `installed` and
-   `paths`.
-2. [`add`](../cli/add.md) for how `files` / `stubs` copy.
-3. A feature page such as [`auth`](../modules/auth.md).
+See [`adonia.json`](./adonia-json.md), [`add`](../cli/add.md), and
+[`auth`](../modules/auth.md).

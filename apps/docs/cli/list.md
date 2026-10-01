@@ -1,11 +1,7 @@
 # list
 
 `list` prints every name in the resolved registry and whether it
-appears in `adonia.json` `installed`. Use it to confirm which tree
-you are pointed at and which slices are already on the host.
-
-This page covers output format, running without `adonia.json`, and
-how status is decided.
+appears in `adonia.json` `installed`.
 
 ## Run it
 
@@ -64,11 +60,5 @@ A `github:…` `registry` value in `adonia.json` fails closed: `list`
 exits non-zero and does not copy or fall back. See
 [registry resolution](./overview.md#registry-resolution).
 
-## Next steps
-
-Install or inspect a name from the list:
-
-1. Run [`init`](./init.md) if you don't have `adonia.json` yet.
-2. [`add`](./add.md) an `available` module.
-3. Open the matching page under
-   [modules](../modules/overview.md).
+See [`init`](./init.md), [`add`](./add.md), and
+[modules](../modules/overview.md).

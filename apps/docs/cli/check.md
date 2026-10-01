@@ -1,11 +1,7 @@
 # check
 
-`check` validates a host that already has `adonia.json`. It reports
-**errors** (exit 1) and **warnings** (exit 0 unless `--strict`). Use
-it after `add` and in CI.
-
-This page covers what is treated as an error versus a warning, and
-how `--strict` changes the exit code.
+`check` validates a host that already has `adonia.json`. Errors
+exit 1. Warnings exit 0 unless `--strict`.
 
 ## Run it
 
@@ -89,13 +85,6 @@ plus:
 `--overwrite` and `--dry-run` do not change `check`: it never
 writes files.
 
-## Next steps
-
-Fix what `check` reported, then move on:
-
-1. Run [`init --wire`](./init.md#wire-the-host) for missing
-   aliases, provider, or exception handler.
-2. [`add`](./add.md) with `--with-models` (or `--with-stubs`) when
-   peer models are missing.
-3. Browse [modules](../modules/overview.md) for the slice you just
-   installed.
+Missing aliases, provider, or exception handler:
+[`init --wire`](./init.md#wire-the-host). Missing peer models:
+[`add`](./add.md) `--with-models` or `--with-stubs`.

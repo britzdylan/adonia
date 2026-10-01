@@ -1,22 +1,6 @@
 # Modules overview
 
-Adonia modules are domain slices the CLI copies into an AdonisJS host
-from the registry. Each module ships a service, typed contracts, and
-optional host stubs.
-
-This page is the catalog for the bundled registry. It explains the
-difference between core packages and feature modules, how `add` copies
-files, and which modules depend on which.
-
-## Core packages versus feature modules
-
-The registry splits packages into **core** (always present after
-`init`) and **feature modules** (you add them one at a time).
-
-`npx adonia init` copies the core set into your host `modules/`
-directory. Feature modules list their dependencies in `module.json`
-`registryDependencies`. `adonia add` walks that graph and copies
-missing packages first.
+Each module is source in the host after `add`. You edit it there.
 
 | Name | Kind | Role |
 |------|------|------|
@@ -30,9 +14,11 @@ missing packages first.
 | `creem` | Feature | Creem checkout, portal, invoices, webhooks |
 | `subscription` | Feature | Subscription state synced from Creem webhooks |
 
-Core packages `types`, `constants`, and `contracts` don't have their
-own pages. They're documented with [`api`](./api.md), because `add api`
-pulls them in automatically.
+`init` copies **core**. Feature modules are separate `add`s.
+`add` walks `registryDependencies` and copies missing packages
+first. Core packages `types`, `constants`, and `contracts` don't
+have their own pages. They're documented with [`api`](./api.md),
+because `add api` pulls them in automatically.
 
 <!-- prettier-ignore -->
 > [!NOTE]

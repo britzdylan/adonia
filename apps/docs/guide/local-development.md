@@ -1,12 +1,10 @@
 # Local development
 
-Local development here means **authoring Adonia itself**: editing
-module sources in this monorepo, pointing the CLI at that tree, and
-syncing the bundled registry. Host apps that only *consume* the
-published CLI can stop at [getting started](./getting-started.md).
+This is for authoring Adonia itself. If you only consume the
+published CLI, stop at [getting started](./getting-started.md).
 
-This page covers the repo layout, `--registry`, `sync-registry`,
-tests, and the docs app.
+You edit module sources in this monorepo, point the CLI at that
+tree, and sync the bundled registry.
 
 ## Layout
 

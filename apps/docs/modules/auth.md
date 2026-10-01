@@ -1,13 +1,17 @@
 # auth
 
 `auth` is email registration, login, verification, and password reset.
-The service talks only to `UserStore`, `PasswordResetStore`, and a
-per-request `SessionManager`. HTTP, Lucid, and Vine stay in host
-adapters and optional stubs.
 
-This page covers the service API, the contracts you must implement,
-events, tokens, and the optional stubs (`--with-adapters`, `--with-stubs`,
-`--with-routes`).
+| Field | Value |
+|-------|-------|
+| Depends on | `api` |
+| Env | `APP_KEY` |
+| Peer models | `#models/user`, `#models/password_reset` |
+| Events | `Auth:RegisterUser`, `Auth:Login`, `Auth:Logout`, and the rest in `module.json` |
+| Contracts | `UserStore`, `PasswordResetStore`, `SessionManager` |
+
+HTTP, Lucid, and Vine stay in host adapters and optional stubs. See
+[concepts](../guide/concepts.md).
 
 ## Add it
 

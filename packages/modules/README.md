@@ -1,17 +1,8 @@
 # adonia
 
-A CLI that copies AdonisJS modules from a registry into your app.
+Your AdonisJS app owns the files. Adonia only copies them in.
 
-The registry holds the modules an API is built from: auth, account,
-notification, Creem billing, and subscription, plus a shared API core.
-`adonia add auth` copies the auth service, its contracts, and a
-manifest into `modules/auth`. Those files are ordinary source in the
-host. `diff` compares them with the registry, and `add --overwrite`
-puts the registry version back. A plain `add` copies only that domain
-slice. Models, migrations, controllers, adapters, and routes are
-separate flags, because they have to match the app they land in.
-
-**Requirements:** Node.js 20+, an AdonisJS app (`adonisrc.ts` and
+**Requirements:** Node.js 24+, npm 11+, an AdonisJS app (`adonisrc.ts` and
 `@adonisjs/core`).
 
 ```bash

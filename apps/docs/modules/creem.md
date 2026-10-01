@@ -1,14 +1,19 @@
 # creem
 
 `creem` is checkout sessions, customer portal links, product-to-plan
-resolution, recent invoices, and webhook verification. The service
-depends on a `CreemClient` port and host-owned `CreemConfig`. It does
-not import `creem_io` or read env.
+resolution, recent invoices, and webhook verification.
 
-This page covers the service API, the client contract, env hints,
-events, and the `creem_io` adapter stub. Subscription state lives in
-[`subscription`](./subscription.md), which calls this module's
-webhook helper.
+| Field | Value |
+|-------|-------|
+| Depends on | `api` |
+| npm | `creem_io@^1.0.0` |
+| Env | `CREEM_API_KEY`, `CREEM_WEBHOOK_SECRET`, `CREEM_TEST_MODE`, `CREEM_SUCCESS_URL` |
+| Events | `Creem:CheckoutCreated`, `Creem:PortalLinkCreated` |
+| Contracts | `CreemClient`, host-owned `CreemConfig` |
+
+The service does not import `creem_io` or read env. Subscription
+state lives in [`subscription`](./subscription.md). See
+[concepts](../guide/concepts.md).
 
 ## Add it
 

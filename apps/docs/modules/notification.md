@@ -1,13 +1,20 @@
 # notification
 
 `notification` is a channel-agnostic dispatcher. You supply a
-registry of notification types; the service fans out to email and
-in-app transports. It does not own templates, preferences, or
-notification type names.
+registry of types; the service fans out to email and in-app
+transports.
 
-This page covers `send`, the registry shape, mail and in-app ports,
-and the Lucid/Mail stubs. `NotificationService` is infrastructure. It
-does not extend `ApiService` and it does not emit domain events.
+| Field | Value |
+|-------|-------|
+| Depends on | `api` |
+| Env | none |
+| Peer models | `#models/app_notification` |
+| Events | none |
+| Contracts | host-owned registry, `MailTransport`, `AppNotificationStore` |
+
+It does not own templates, preferences, or type names.
+`NotificationService` does not extend `ApiService`. See
+[concepts](../guide/concepts.md).
 
 ## Add it
 

@@ -1,14 +1,19 @@
 # account
 
 `account` is authenticated profile updates, staged email change,
-password change, and account deletion. It reuses the shared
-`UserStore` from [`auth`](./auth.md) and an optional `AvatarStorage`
-port for file cleanup.
+password change, and account deletion.
 
-This page covers the service API, email-change tokens, avatar
-cleanup, events, and the optional stubs. Inbox and marketing-preference
-HTTP endpoints in the example controller are host-owned; they are
-not methods on `AccountService`.
+| Field | Value |
+|-------|-------|
+| Depends on | `api`, `auth` |
+| Env | `APP_KEY` |
+| Peer models | `#models/user` |
+| Events | `Account:UpdateUserProfile`, `Account:UpdateUserEmail`, `Account:ConfirmEmailChange`, `Account:UpdateUserPassword`, `Account:DeleteAccount` |
+| Contracts | `UserStore`, optional `AvatarStorage` |
+
+Inbox and marketing-preference HTTP in the example controller are
+host-owned; they are not methods on `AccountService`. See
+[concepts](../guide/concepts.md).
 
 ## Add it
 

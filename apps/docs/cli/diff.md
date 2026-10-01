@@ -1,11 +1,8 @@
 # diff
 
-`diff` compares the host copy of a module to the registry. It hashes
-each planned file. Matching files stay quiet. Missing or changed
-files print, and the process exits 1 when anything differed.
-
-This page covers what is compared, how stub flags change the plan,
-and the output format.
+`diff` compares the host copy of a module to the registry. Matching
+files stay quiet. Missing or changed files print. Exit 1 when
+anything differed.
 
 ## Run it
 
@@ -75,11 +72,6 @@ and the [stub flags](../reference/cli-flags.md#stub-flags).
 `--overwrite` and `--dry-run` do not change `diff`: it never writes
 host files.
 
-## Next steps
-
-Replace a drifted slice, or audit the whole host:
-
-1. Recopy with [`add`](./add.md) `--overwrite` when you want the
-   registry version back.
-2. Run [`check`](./check.md) for missing folders, peer models, and
-   wiring — `diff` does not cover those.
+Recopy with [`add`](./add.md) `--overwrite` to put the registry
+version back. [`check`](./check.md) covers folders, peer models,
+and wiring; `diff` does not.

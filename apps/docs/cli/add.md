@@ -4,9 +4,6 @@
 host. Plain `add` copies the domain slice under `modules/<name>/`.
 Host models, adapters, controllers, and routes are opt-in flags.
 
-This page covers the install plan, stub flags, copy conflicts, npm
-and env side effects, and route wiring.
-
 ## Run it
 
 `adonia.json` must already exist (`npx adonia init` first).
@@ -152,10 +149,6 @@ If routes were copied without `--wire-routes`, it prints the
 and the [stub flags](../reference/cli-flags.md#stub-flags) above.
 `--overwrite` on `add` is the same switch as the global flag.
 
-## Next steps
-
-Inspect and validate what you copied:
-
-1. Run [`list`](./list.md) to confirm `installed`.
-2. Run [`diff`](./diff.md) after you edit a copied file.
-3. Run [`check`](./check.md) before you rely on the host.
+See [`list`](./list.md), [`diff`](./diff.md), and
+[`check`](./check.md). Why domain and stubs split is in
+[concepts](../guide/concepts.md).

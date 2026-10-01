@@ -1,12 +1,10 @@
 # CLI flags
 
-This page is the catalog of Adonia CLI flags. Command pages explain
-when to use each switch; this table is the complete list.
+Flags for `adonia`. Command pages say when to use each switch.
 
-Shared flags live on the root `adonia` program and apply to every
-command. Stub flags apply to [`add`](../cli/add.md) and
-[`diff`](../cli/diff.md). `init` and `check` have command-specific
-flags of their own.
+Shared flags live on the root program. Stub flags apply to
+[`add`](../cli/add.md) and [`diff`](../cli/diff.md). `init` and
+`check` have command-specific flags.
 
 ## Shared flags
 
@@ -72,11 +70,5 @@ These flags are on [`check`](../cli/check.md) only.
 |------|---------|--------|
 | `--strict` | `false` | Exit 1 when any warning was printed |
 
-## Next steps
-
-Return to a command page, or the other reference files:
-
-1. [CLI overview](../cli/overview.md)
-2. [`adonia.json`](./adonia-json.md) and
-   [`module.json`](./module-json.md)
-3. [`add`](../cli/add.md) for the copy pipeline
+See [CLI overview](../cli/overview.md),
+[`adonia.json`](./adonia-json.md), and [`add`](../cli/add.md).

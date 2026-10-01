@@ -1,13 +1,18 @@
 # subscription
 
 `subscription` keeps local subscription state in sync with Creem
-webhooks. Every handler upserts, so processing is idempotent and
-order-independent. Plan names and the default plan come from
-[`creem`](./creem.md).
+webhooks. Every handler upserts.
 
-This page covers read APIs (`getUserPlan`, `isActive`), webhook
-sync, the store contract, and the Lucid stubs. Checkout HTTP stays
-in the host; this module does not ship controllers or routes.
+| Field | Value |
+|-------|-------|
+| Depends on | `api`, `creem` |
+| Env | none (credentials stay on `creem`) |
+| Peer models | `#models/subscription` |
+| Events | `Subscription:Activated`, `Subscription:Revoked`, `Subscription:Canceled`, `Subscription:ScheduledCancel`, `Subscription:Updated`, `Subscription:RefundCreated` |
+| Contracts | `SubscriptionStore` |
+
+Plan names and the default plan come from [`creem`](./creem.md).
+No controllers or routes. See [concepts](../guide/concepts.md).
 
 ## Add it
 

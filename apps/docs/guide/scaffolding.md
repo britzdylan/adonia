@@ -1,12 +1,15 @@
 # Scaffolding
 
-Scaffolding is `npx adonia init --scaffold`: wire the host, install
-core, then copy **every** feature module in the registry with stubs
-and routes. Use it when you want every feature module, with stubs
-and routes, on a new Adonis app.
+`init --scaffold` copies every feature module, with stubs and
+routes, into an AdonisJS app you already have.
 
-This page compares that path to incremental [`add`](../cli/add.md),
-lists what lands on disk, and notes Adonis packages the stubs need.
+Use incremental [`add`](../cli/add.md) when you only want one
+slice. Use `--scaffold` when you want the whole catalog on a new
+app.
+
+```bash
+npx adonia init --scaffold
+```
 
 ## Incremental add versus scaffold
 

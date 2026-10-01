@@ -1,16 +1,8 @@
 # Host wiring
 
-Host wiring is the Adonis setup Adonia needs: import aliases,
-the API provider, the JSON exception handler, and
-`config/modules.ts`. Domain files under `modules/` do not boot
-those pieces by themselves.
-
-This page is what `--wire` changes, what you still do by hand, and
-how route mounting differs from `init --wire`.
-
-## Apply wiring
-
-The usual command is:
+Domain files under `modules/` do not boot. You still need import
+aliases, the API provider, the JSON exception handler, and
+`config/modules.ts`. `--wire` writes those pieces.
 
 ```bash
 npx adonia init --wire

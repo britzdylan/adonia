@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: Adonia
-  tagline: Copies AdonisJS modules from a registry into your app.
+  tagline: Your AdonisJS app owns the files. Adonia only copies them in.
   actions:
     - theme: brand
       text: Getting started

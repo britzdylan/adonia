@@ -1,11 +1,10 @@
 # Getting started
 
-This guide walks you from an empty AdonisJS API to a wired Adonia
-host with the `auth` domain slice copied in. You need Node.js 20 or
-later.
+Create an AdonisJS API, or use one you already have. Then put
+Adonia on it and copy the auth module. Node.js 24 or later, and
+npm 11 or later.
 
-The steps use the published CLI (`npx adonia@latest`). For
-authoring the registry itself, see
+Use `npx adonia@latest`. If you are changing Adonia itself, see
 [local development](./local-development.md).
 
 ## Create an AdonisJS app
@@ -48,8 +47,8 @@ You must see `api`, `types`, `constants`, and `contracts` as
 
 ## Add a feature module
 
-Copy the `auth` domain slice (service, contracts, events). This
-does **not** copy Lucid models or routes:
+Copy the auth service, its contracts, and events. This does
+**not** copy Lucid models or routes:
 
 ```bash
 npx adonia add auth

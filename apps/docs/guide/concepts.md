@@ -1,12 +1,12 @@
 # Concepts
 
-Adonia splits **domain** (portable services and contracts) from
-**host I/O** (Lucid, HTTP, Vine, Drive, Mail, payment SDKs). The
-CLI copies domain by default and host files only when you pass
-`--with-*` flags.
+Read this after you have run `add` once. If you have not, start
+with [what Adonia is](./what-is-adonia.md) and
+[getting started](./getting-started.md).
 
-This page defines the terms the rest of the docs use: host,
-registry, module, stub, adapter, envelope, and events.
+A plain `add` copies services and contracts under `modules/`. Lucid,
+HTTP, Vine, Drive, Mail, and payment SDKs stay in the host unless
+you pass `--with-*` flags. That split is the rest of this page.
 
 ## Host, registry, and module
 
@@ -25,7 +25,7 @@ A **module** is one folder in that registry with a
 [`add`](../cli/add.md) copies it into `paths.modules` (default
 `modules/<name>/`).
 
-## Domain slice versus stubs
+## Domain versus stubs
 
 The **domain slice** is what plain `add` copies: `service.ts`,
 `contracts/`, `events.ts`, `options.ts`, `module.json`. Feature
@@ -96,9 +96,8 @@ every planned file for that add copies cleanly. Full rules:
 
 ## Next steps
 
-Wire a host and pick an install style:
-
-1. Finish [host wiring](./host-wiring.md) if `init` ran without
-   `--wire`.
-2. Choose incremental `add` or [scaffolding](./scaffolding.md).
-3. Open a module page, starting with [`auth`](../modules/auth.md).
+1. Open [`auth`](../modules/auth.md) or the
+   [modules overview](../modules/overview.md).
+2. [Host wiring](./host-wiring.md) if `init` ran without `--wire`.
+3. [Scaffolding](./scaffolding.md) if you want every module at
+   once.

@@ -2,12 +2,8 @@
 
 `adonia.json` is the host manifest. `init` writes it at the app root.
 Every command except `list` (when the file is missing) reads it.
-The CLI parses the object with Zod (`hostModulesSchema`) and, after
-install, with the JSON Schema at
-`adonia/schema/adonia.schema.json`.
-
-This page is the field catalog, the default `init` writes, and how
-`registry` / `installed` / `paths` drive the other commands.
+Parsed with Zod (`hostModulesSchema`) and, after install, the JSON
+Schema at `adonia/schema/adonia.schema.json`.
 
 ## Location and schema
 
@@ -131,11 +127,6 @@ After a successful `init` (core installed) you typically see
 `api`, `types`, `constants`, and `contracts`. Feature names appear
 as you `add` them.
 
-## Next steps
-
-Use the other reference pages, or the commands that read this file:
-
-1. [`module.json`](./module-json.md) for registry manifests.
-2. [CLI flags](./cli-flags.md) for `--registry` and `--overwrite`.
-3. [Host wiring](../guide/host-wiring.md) for the import map
-   `--wire` actually writes.
+See [`module.json`](./module-json.md) and
+[CLI flags](./cli-flags.md). Why `--wire` writes the import map is
+in [host wiring](../guide/host-wiring.md).

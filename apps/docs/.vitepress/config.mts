@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Adonia',
-  description: 'AdonisJS modules you add with a CLI, not a starter kit.',
+  description: 'Your AdonisJS app owns the files. Adonia only copies them in.',
   vite: {
     ssr: {
       noExternal: ['vitepress-carbon'],

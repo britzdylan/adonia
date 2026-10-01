@@ -1,12 +1,11 @@
 # api
 
-`api` is the shared HTTP and domain base every other module sits on.
-It gives you a JSON envelope, `ApiService`, `ctx.respond`, and a
-global exception handler. `npx adonia init` installs it together with
-`types`, `constants`, and `contracts`.
+`api` is the shared HTTP and domain base every other module sits on:
+JSON envelope, `ApiService`, `ctx.respond`, exception handler.
 
-This page covers those four core packages: what they copy, how
-controllers build responses, and how errors become one envelope.
+`init` installs it with `types`, `constants`, and `contracts`. No
+stubs, npm dependencies, env keys, or domain events. Domain versus
+stubs: [concepts](../guide/concepts.md).
 
 ## Add it
 
