@@ -44,7 +44,8 @@ describe('adonia pack smoke', () => {
     assert.ok(existsSync(join(pkgRoot, 'build', 'cli.js')))
 
     packDir = mkdtempSync(join(tmpdir(), 'adonia-pack-'))
-    const packed = spawnSync('npm', ['pack', '--pack-destination', packDir], {
+    // Skip prepack. It runs tsc, and these tests execute build/cli.js at the same time.
+    const packed = spawnSync('npm', ['pack', '--ignore-scripts', '--pack-destination', packDir], {
       cwd: pkgRoot,
       encoding: 'utf8',
       shell: process.platform === 'win32',
