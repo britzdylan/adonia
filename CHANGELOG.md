@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 0.2.1 (2026-10-01)
+
+### Added
+
+- update adonis-api-stater to version 0.2.0 and add new adapters
+
+### Changed
+
+- streamline CI and publish workflows, update typecheck command
+
+### Documentation
+
+- enhance module interface documentation and references
+
 ## 0.2.0 (2026-10-01)
 
 ### Breaking
