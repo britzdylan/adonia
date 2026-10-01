@@ -2,7 +2,9 @@
 
 Read this after you have run `add` once. If you have not, start
 with [what Adonia is](./what-is-adonia.md) and
-[getting started](./getting-started.md).
+[getting started](./getting-started.md). If you are writing a new
+slice, the authoring contract is the
+[module interface](./module-interface.md).
 
 A plain `add` copies services and contracts under `modules/`. Lucid,
 HTTP, Vine, Drive, Mail, and payment SDKs stay in the host unless
@@ -101,3 +103,5 @@ every planned file for that add copies cleanly. Full rules:
 2. [Host wiring](./host-wiring.md) if `init` ran without `--wire`.
 3. [Scaffolding](./scaffolding.md) if you want every module at
    once.
+4. [Module interface](./module-interface.md) when you author a
+   new slice.

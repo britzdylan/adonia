@@ -23,6 +23,7 @@ export default defineConfig({
             { text: 'What is Adonia', link: '/guide/what-is-adonia' },
             { text: 'Getting started', link: '/guide/getting-started' },
             { text: 'Concepts', link: '/guide/concepts' },
+            { text: 'Module interface', link: '/guide/module-interface' },
             { text: 'Scaffolding', link: '/guide/scaffolding' },
             { text: 'Host wiring', link: '/guide/host-wiring' },
             { text: 'Local development', link: '/guide/local-development' },

@@ -87,6 +87,10 @@ packed tarball still wants a current `registry/` tree.
 
 ## Authoring a module
 
+The runtime contract every slice must speak is the
+[module interface](./module-interface.md). `module.json` is the
+CLI catalog, not that contract.
+
 Add or edit a folder under `apps/adonis-api-stater/modules/`, keep
 `module.json` in the
 [`module.json` schema](../reference/module-json.md), and list the
@@ -127,5 +131,7 @@ Validate a change the way CI does:
 1. Run `npm test -w adonia` after CLI or registry edits.
 2. `adonia check --cwd <host> --registry <fixture>` on a throwaway
    app.
-3. Return to the [CLI overview](../cli/overview.md) for flags, or
+3. Follow the [module interface](./module-interface.md) when you
+   add a folder.
+4. Return to the [CLI overview](../cli/overview.md) for flags, or
    the [modules overview](../modules/overview.md) for slice APIs.

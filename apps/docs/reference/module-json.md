@@ -205,7 +205,9 @@ Trimmed from the bundled `auth` manifest:
 ```
 
 Author a new folder the same way, then list it in `registry.json`.
-See [local development](../guide/local-development.md).
+The runtime contract (service, ports, envelope, events) is the
+[module interface](../guide/module-interface.md). See
+[local development](../guide/local-development.md).
 
 See [`adonia.json`](./adonia-json.md), [`add`](../cli/add.md), and
 [`auth`](../modules/auth.md).

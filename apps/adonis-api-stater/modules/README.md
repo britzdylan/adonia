@@ -81,6 +81,6 @@ Prefer `npx adonia`. If installing by hand:
 
 ## Authoring a new module
 
-See [Adding a feature module](../../../docs/architecture/adding-modules.md)
+See the [module interface](../../docs/guide/module-interface.md)
 for the service API, contracts, events, stubs, and `module.json`
 checklist.

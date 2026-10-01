@@ -250,5 +250,6 @@ Wire a host, then add a feature module:
    provider and exception handler.
 2. Add [`auth`](./auth.md) for accounts, or
    [`notification`](./notification.md) if you only need dispatch.
-3. Read [`module.json`](../reference/module-json.md) when you author
-   your own slice.
+3. Read the [module interface](../guide/module-interface.md) when
+   you author your own slice, then
+   [`module.json`](../reference/module-json.md) for fields.

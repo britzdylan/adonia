@@ -14,7 +14,7 @@ transports.
 
 It does not own templates, preferences, or type names.
 `NotificationService` does not extend `ApiService`. See
-[concepts](../guide/concepts.md).
+[module interface](../guide/module-interface.md).
 
 ## Add it
 

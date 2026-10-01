@@ -85,7 +85,8 @@ core) and `auth` if they aren't already in `adonia.json`.
 Domain services return DTOs or `void` and throw `ApiException`. They
 don't wrap HTTP envelopes. Controllers in the host, or the optional
 stubs, call `ApiService.prepareResponse` / `preparePaginatedResponse`
-and `ctx.respond`.
+and `ctx.respond`. The full authoring contract is the
+[module interface](../guide/module-interface.md).
 
 Services that extend `ApiService` emit events through `emitSafe`. An
 event fires only when its name is listed in `config/modules.ts` under
@@ -113,5 +114,7 @@ Pick a module and add it to a wired host:
    `npx adonia init --wire`.
 2. Read [`api`](./api.md) so you know the envelope and exception
    shape every other module uses.
-3. Add a feature module, starting with [`auth`](./auth.md) or
+3. Read the [module interface](../guide/module-interface.md) if
+   you are writing a new slice.
+4. Add a feature module, starting with [`auth`](./auth.md) or
    [`notification`](./notification.md).
