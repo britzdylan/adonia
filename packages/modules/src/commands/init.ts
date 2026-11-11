@@ -3,7 +3,7 @@ import { expandDependencies, resolveRegistry } from '../registry/index.js'
 import { CORE_PACKAGES } from '../schema.js'
 import type { SharedFlags } from '../types.js'
 import { applyWire, printWireChecklist } from '../wire.js'
-import { installModules } from './add.js'
+import { installModules, reportConflicts } from './add.js'
 
 export async function runInit(
   flags: SharedFlags & { wire?: boolean; skipCore?: boolean; scaffold?: boolean }
@@ -88,6 +88,10 @@ export async function runInit(
         config,
         registry,
       })
+      if (result.conflicts.length) {
+        reportConflicts(result.conflicts, flags.cwd)
+      }
+      for (const e of result.wireErrors) console.error(e)
       if (result.conflicts.length || result.wireErrors.length) {
         process.exitCode = 1
       }
@@ -137,6 +141,10 @@ export async function runInit(
     registry,
   })
 
+  if (result.conflicts.length) {
+    reportConflicts(result.conflicts, flags.cwd)
+  }
+  for (const e of result.wireErrors) console.error(e)
   if (result.conflicts.length || result.wireErrors.length) {
     process.exitCode = 1
   }

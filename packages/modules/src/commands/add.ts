@@ -85,18 +85,54 @@ export async function runAdd(names: string[], flags: AddFlags): Promise<void> {
 
   const result = await installModules({ names: ordered, flags, config, registry })
   if (result.conflicts.length) {
-    console.error(
-      '\nConflicts (use --overwrite to replace). Not recorded in adonia.json\n' +
-        'installed until all planned files for the module copy cleanly.'
-    )
-    for (const c of result.conflicts) {
-      console.error(`  ${describePlan(c, flags.cwd)}`)
-    }
+    reportConflicts(result.conflicts, flags.cwd)
     process.exitCode = 1
   }
   if (result.wireErrors.length) {
     for (const e of result.wireErrors) console.error(e)
     process.exitCode = 1
+  }
+}
+
+/**
+ * Files the AdonisJS API starter kit ships that the auth stubs replace.
+ * A conflict on one of these on a new app is expected, not a local edit.
+ */
+const STARTER_KIT_REPLACED = [
+  'app/models/user.ts',
+  'database/migrations/1761885935168_create_users_table.ts',
+]
+
+/**
+ * Starter-kit sample auth files. They are written against the kit's own
+ * User model, so they stop compiling once the auth model stub is in place.
+ */
+const STARTER_KIT_SAMPLES = [
+  'app/controllers/new_account_controller.ts',
+  'app/controllers/access_tokens_controller.ts',
+  'app/controllers/profile_controller.ts',
+  'app/validators/user.ts',
+  'app/transformers/user_transformer.ts',
+]
+
+export function reportConflicts(conflicts: PlannedCopy[], cwd: string): void {
+  console.error(
+    '\nConflicts (use --overwrite to replace). Not recorded in adonia.json\n' +
+      'installed until all planned files for the module copy cleanly.'
+  )
+  for (const c of conflicts) {
+    console.error(`  ${describePlan(c, cwd)}`)
+  }
+
+  const kitFiles = STARTER_KIT_REPLACED.filter((rel) =>
+    conflicts.some((c) => c.dest === join(cwd, rel))
+  )
+  if (kitFiles.length) {
+    console.error(
+      '\nThese come from the AdonisJS starter kit and the auth stubs replace them:\n' +
+        kitFiles.map((rel) => `  ${rel}`).join('\n') +
+        '\nOn a new app, re-run with --overwrite. On an existing app, merge them by hand.'
+    )
   }
 }
 
@@ -242,6 +278,20 @@ export async function installModules(opts: {
   }
 
   printNextSteps(flags, stubSelect, [...requestedNames][0] ?? 'auth')
+
+  const userModel = join(flags.cwd, config.paths.models, 'user.ts')
+  const userModelInstalled =
+    plannedDests.has(userModel) && !allConflicts.some((c) => c.dest === userModel)
+  if (!flags.dryRun && userModelInstalled) {
+    const samples = STARTER_KIT_SAMPLES.filter((rel) => existsSync(join(flags.cwd, rel)))
+    if (samples.length) {
+      console.log(
+        '\nStarter-kit sample auth files are still present. They target the kit\'s own\n' +
+          'User model; remove them and their routes in start/routes.ts:\n' +
+          samples.map((rel) => `  ${rel}`).join('\n')
+      )
+    }
+  }
 
   return { conflicts: allConflicts, wireErrors }
 }

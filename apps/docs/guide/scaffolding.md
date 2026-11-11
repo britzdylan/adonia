@@ -74,6 +74,35 @@ when the stub is present and the package is missing.
 the host `package.json`. Put `CREEM_*` values in env yourself;
 the CLI only prints missing names.
 
+## New starter-kit app
+
+The AdonisJS API starter kit ships its own `app/models/user.ts` and
+`1761885935168_create_users_table.ts` migration. The `auth` stubs
+replace both, so a plain scaffold reports them as conflicts and
+exits 1 without recording `auth` as installed.
+
+On a new app, pass `--overwrite`:
+
+```bash
+npx adonia init --scaffold --overwrite
+```
+
+The kit's sample auth files target the kit's own `User` model and
+stop compiling after that. Scaffold lists the ones it finds; remove
+them and their routes in `start/routes.ts`:
+
+- `app/controllers/new_account_controller.ts`
+- `app/controllers/access_tokens_controller.ts`
+- `app/controllers/profile_controller.ts`
+- `app/validators/user.ts`
+- `app/transformers/user_transformer.ts`
+
+On an app with your own user model, skip `--overwrite` and merge
+the two files by hand.
+
+Migration stubs keep a fixed timestamp prefix, so `users` is
+created before the tables that reference it.
+
 ## Already installed
 
 If every feature module is already in `adonia.json` `installed`
