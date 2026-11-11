@@ -38,3 +38,41 @@ test.group('ctx.respond error status', () => {
     assert.equal(statusCode, 400)
   })
 })
+
+test.group('ctx.respond payload serialization', () => {
+  const ctx = { containerResolver: undefined } as unknown as HttpContext
+
+  test('passes a null payload through', async () => {
+    const result = await respond.call(ctx, { success: true, message: 'M_X', data: null })
+    assert.deepEqual(result, { success: true, message: 'M_X', data: null })
+  })
+
+  test('serializes Lucid rows instead of exposing their internals', async () => {
+    const row = {
+      $attributes: { id: 1, password: 'hash' },
+      $original: { id: 1, password: 'hash' },
+      serialize() {
+        return { email: 'a@test.com' }
+      },
+    }
+
+    const single = await respond.call(ctx, { success: true, message: null, data: row })
+    assert.deepEqual(single, { success: true, message: null, data: { email: 'a@test.com' } })
+
+    const list = await respond.call(ctx, { success: true, message: null, data: [row, row] })
+    assert.deepEqual(list, {
+      success: true,
+      message: null,
+      data: [{ email: 'a@test.com' }, { email: 'a@test.com' }],
+    })
+  })
+
+  test('keeps plain DTO payloads intact', async () => {
+    const result = await respond.call(ctx, {
+      success: true,
+      message: null,
+      data: { id: 1, tags: ['a'] },
+    })
+    assert.deepEqual(result, { success: true, message: null, data: { id: 1, tags: ['a'] } })
+  })
+})

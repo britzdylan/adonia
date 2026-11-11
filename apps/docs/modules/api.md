@@ -164,10 +164,18 @@ return ctx.response.ok(
   await ctx.respond({
     success: true,
     message: responseCodes.AUTH_LOGIN.code,
-    data: { user, token: sessionResult.token ?? null },
+    data: { user: toPublicUser(user), token: sessionResult.token ?? null },
   })
 )
 ```
+
+`data: null` passes through as `null`. Lucid rows (and arrays of
+them) go through `row.serialize()`, so columns marked
+`serializeAs: null` stay out of the response.
+
+Return `toPublicUser(user)` from `#modules/contracts/index`, not
+the `User` DTO. The DTO carries `emailVerificationToken`, which
+must only reach the user by email.
 
 Register the provider in `adonisrc.ts`:
 

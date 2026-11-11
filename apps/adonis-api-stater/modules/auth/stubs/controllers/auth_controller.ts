@@ -13,6 +13,7 @@ import {
   LucidUserStore,
 } from '#adapters/auth'
 import { responseCodes } from '#constants/responseCodes'
+import { toPublicUser } from '#modules/contracts/index'
 import {
   loginValidator,
   registerValidator,
@@ -33,7 +34,7 @@ export default class AuthController {
       await ctx.respond({
         success: true,
         message: responseCodes.AUTH_REGISTER.code,
-        data: user,
+        data: toPublicUser(user),
       })
     )
   }
@@ -46,7 +47,7 @@ export default class AuthController {
       await ctx.respond({
         success: true,
         message: responseCodes.AUTH_LOGIN.code,
-        data: { user, token: sessionResult.token ?? null },
+        data: { user: toPublicUser(user), token: sessionResult.token ?? null },
       })
     )
   }
@@ -70,7 +71,7 @@ export default class AuthController {
       await ctx.respond({
         success: true,
         message: responseCodes.AUTH_ACTIVATE_ACCOUNT.code,
-        data: user,
+        data: toPublicUser(user),
       })
     )
   }
