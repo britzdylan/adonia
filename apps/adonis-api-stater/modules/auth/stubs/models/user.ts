@@ -7,7 +7,7 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { ModelsTypes } from '#modules/types'
 import encryption from '@adonisjs/core/services/encryption'
 import env from '#start/env'
-import { defaultAuthOptions } from '../../options.ts'
+import { defaultAuthOptions } from '#modules/auth/options'
 
 interface IUserModel extends ModelsTypes.IUserModel {}
 

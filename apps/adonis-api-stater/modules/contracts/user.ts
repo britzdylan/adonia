@@ -21,6 +21,26 @@ export type User = {
 }
 
 /**
+ * User shape that is safe to return to API clients.
+ * Omits emailVerificationToken: anyone holding it can verify the email, so
+ * it must only travel by email (via module events), never in a response.
+ */
+export type PublicUser = Omit<User, 'emailVerificationToken'>
+
+export function toPublicUser(user: User): PublicUser {
+  return {
+    id: user.id,
+    email: user.email,
+    pendingEmail: user.pendingEmail,
+    authMethod: user.authMethod,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    avatarKey: user.avatarKey,
+    emailVerifiedAt: user.emailVerifiedAt,
+  }
+}
+
+/**
  * Input for creating an email-auth user via UserStore.createEmailUser.
  */
 export type RegisterUserInput = {

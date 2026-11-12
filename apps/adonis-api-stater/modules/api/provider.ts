@@ -68,6 +68,44 @@ type Respondable =
   | ApiResult<unknown>
   | PaginatedResponse<unknown>
 
+type SerializableRow = { serialize(): unknown }
+
+/**
+ * Lucid rows expose internals ($attributes, $original, …) as enumerable
+ * properties. Duck-typed so this module does not import Lucid at runtime.
+ */
+function isLucidRow(value: unknown): value is SerializableRow {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    '$attributes' in value &&
+    typeof (value as { serialize?: unknown }).serialize === 'function'
+  )
+}
+
+/**
+ * Serializes an envelope payload.
+ * - null / undefined pass through (the serializer rejects null).
+ * - Lucid rows go through row.serialize() so `serializeAs: null` columns
+ *   (password, tokens) never reach the client.
+ * - Everything else (transformers, DTOs, primitives) goes to the serializer.
+ */
+async function serializeData(ctx: HttpContext, data: unknown): Promise<unknown> {
+  if (data === null || data === undefined) {
+    return null
+  }
+  if (isLucidRow(data)) {
+    return data.serialize()
+  }
+  if (Array.isArray(data) && data.some(isLucidRow)) {
+    return Promise.all(data.map((item) => serializeData(ctx, item)))
+  }
+  return serializer.serializeWithoutWrapping(
+    data as Parameters<ApiSerializer['serializeWithoutWrapping']>[0],
+    ctx.containerResolver
+  )
+}
+
 /**
  * Bridges ApiService envelopes to HTTP JSON without double-wrapping `data`.
  * Serializes the payload via transformers, then restores the shared envelope.
@@ -79,10 +117,7 @@ export async function respond(this: HttpContext, result: Respondable) {
   }
 
   if (isPaginatedResponse(result)) {
-    const data = await serializer.serializeWithoutWrapping(
-      result.data,
-      this.containerResolver
-    )
+    const data = await serializeData(this, result.data)
     return {
       success: true as const,
       message: result.message,
@@ -92,10 +127,7 @@ export async function respond(this: HttpContext, result: Respondable) {
   }
 
   if (isApiResponse(result)) {
-    const data = await serializer.serializeWithoutWrapping(
-      result.data,
-      this.containerResolver
-    )
+    const data = await serializeData(this, result.data)
     return {
       success: true as const,
       message: result.message,

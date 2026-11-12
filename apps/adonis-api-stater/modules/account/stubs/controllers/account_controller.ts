@@ -10,6 +10,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { DateTime } from 'luxon'
 import { createAccountService } from '#adapters/account'
+import { toUser } from '#adapters/map_user'
+import { toPublicUser } from '#modules/contracts/index'
 import { responseCodes } from '#constants/responseCodes'
 import User from '#models/user'
 import AppNotification from '#models/app_notification'
@@ -30,7 +32,7 @@ export default class AccountController {
       await ctx.respond({
         success: true,
         message: responseCodes.USER_SHOW.code,
-        data: user,
+        data: toPublicUser(toUser(user)),
       })
     )
   }
@@ -43,7 +45,7 @@ export default class AccountController {
       await ctx.respond({
         success: true,
         message: responseCodes.PROFILE_UPDATED.code,
-        data: updated,
+        data: toPublicUser(updated),
       })
     )
   }
@@ -56,7 +58,7 @@ export default class AccountController {
       await ctx.respond({
         success: true,
         message: responseCodes.EMAIL_VERIFICATION_SENT.code,
-        data: updated,
+        data: toPublicUser(updated),
       })
     )
   }
@@ -68,7 +70,7 @@ export default class AccountController {
       await ctx.respond({
         success: true,
         message: responseCodes.EMAIL_CHANGE_CONFIRMED.code,
-        data: user,
+        data: toPublicUser(user),
       })
     )
   }

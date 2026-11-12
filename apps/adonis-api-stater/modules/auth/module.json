@@ -23,7 +23,7 @@
   "registryDependencies": ["api"],
   "peerModels": ["#models/user", "#models/password_reset"],
   "configKeys": ["modules.auth"],
-  "env": ["APP_KEY"],
+  "env": ["APP_KEY", "AVATAR_URL"],
   "events": [
     "Auth:RegisterUser",
     "Auth:CreateNewVerificationToken",

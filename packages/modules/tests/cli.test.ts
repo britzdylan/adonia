@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict'
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync, unlinkSync } from 'node:fs'
+import {
+  mkdtempSync,
+  mkdirSync,
+  writeFileSync,
+  readFileSync,
+  readdirSync,
+  existsSync,
+  unlinkSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -576,6 +584,48 @@ describe('adonia CLI', () => {
     const routes = readFileSync(join(host, 'start/routes.ts'), 'utf8')
     assert.ok(routes.includes("./routes/auth.js"), routes)
     assert.ok(routes.includes("./routes/account.js"), routes)
+  })
+
+  it('migration stubs keep timestamp prefixes so users is created first', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(dir)
+    assert.equal(run(['init', '--scaffold'], dir).status, 0)
+
+    const migrations = readdirSync(join(dir, 'database/migrations')).sort()
+    assert.ok(migrations.length >= 6)
+    for (const file of migrations) {
+      assert.match(file, /^\d{13}_/, `${file} has no timestamp prefix`)
+    }
+    assert.match(migrations[0], /_create_users_table\.ts$/)
+
+    const userModel = readFileSync(join(dir, 'app/models/user.ts'), 'utf8')
+    assert.doesNotMatch(userModel, /from '\.\.\//, 'user model must not use relative module imports')
+  })
+
+  it('init --scaffold reports starter-kit conflicts instead of failing silently', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'adonia-'))
+    fakeAdonis(dir)
+    mkdirSync(join(dir, 'app/models'), { recursive: true })
+    mkdirSync(join(dir, 'app/controllers'), { recursive: true })
+    writeFileSync(join(dir, 'app/models/user.ts'), '// starter kit user model\n')
+    writeFileSync(join(dir, 'app/controllers/new_account_controller.ts'), '// kit sample\n')
+
+    const first = run(['init', '--scaffold'], dir)
+    assert.equal(first.status, 1)
+    assert.match(first.stderr, /Conflicts/)
+    assert.match(first.stderr, /app\/models\/user\.ts/)
+    assert.match(first.stderr, /starter kit/)
+    assert.equal(
+      readFileSync(join(dir, 'app/models/user.ts'), 'utf8'),
+      '// starter kit user model\n'
+    )
+
+    const second = run(['init', '--scaffold', '--overwrite'], dir)
+    assert.equal(second.status, 0, second.stderr)
+    assert.match(readFileSync(join(dir, 'app/models/user.ts'), 'utf8'), /class User/)
+    assert.match(second.stdout, /new_account_controller\.ts/)
+    const config = JSON.parse(readFileSync(join(dir, 'adonia.json'), 'utf8'))
+    assert.ok(config.installed.includes('auth'))
   })
 
   it('github: registry fails closed without bundled fallback', () => {
