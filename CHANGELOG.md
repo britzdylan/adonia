@@ -2,6 +2,48 @@
 
 ## Unreleased
 
+## 0.3.0 (2026-11-20)
+
+### Breaking
+
+- `CreemClient` requires `cancelSubscription(subscriptionId)` and
+  `SubscriptionStore` requires `findNotEndedByUserId(userId, endedStatuses)`.
+  Custom adapters must add them; the Lucid, creem_io and test stubs have them.
+- A validation error `message` is now `E_VALIDATION_ERROR` (or an
+  `E_VALIDATION_ERROR_*` code from a custom rule), not Vine's first field
+  message. Field messages stay in `errors`.
+- `AuthService.requestPasswordReset` no longer throws for an unknown address;
+  it does nothing. The resend-activation and forgot-password validator stubs
+  no longer have the `exists` rule.
+- The `DELETE /api/v1/account` controller stub calls `closeAccount` and needs
+  `password` in the body.
+
+### Added
+
+- add toMailRecipient and formatMailAddress
+- strip HTML from strings and nested JSON input
+- add Slack and Discord incoming-webhook messages
+- add host-defined plans and PlanService
+- track email delivery through a header reference
+- add per-user, per-address and per-resource limiter presets
+- add list, CSV, batch and content negotiation helpers
+- add safe HTTP requests to user-supplied URLs
+- add email preferences and the in-app inbox
+- close an account with a password and closure steps
+- render every error code through the envelope and add ApiException data
+- adonisjs create api
+- enhance adonis-api-stater with drive and mail configurations
+
+### Fixed
+
+- do not reveal which addresses have an account
+- make scaffold work on a new starter-kit app
+- stop leaking password hash and verification token in responses
+
+### Changed
+
+- remove deprecated adapters and controllers from adonis-api-stater
+
 ## 0.2.3 (2026-10-01)
 
 ### Fixed
