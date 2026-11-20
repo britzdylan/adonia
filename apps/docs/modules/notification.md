@@ -46,8 +46,10 @@ Plain `add` copies the domain slice to `modules/notification/`:
 | `service.ts` | `NotificationService` |
 | `preferences.ts` | `PreferenceAwareNotificationService` |
 | `inbox.ts` | `InboxService` |
+| `delivery.ts` | `sendTracked`, `createTrackedMessenger`, `DELIVERY_REF_HEADER` |
+| `recipient.ts` | `toMailRecipient`, `formatMailAddress` |
 | `options.ts` | `onWarn` / `onError` callbacks |
-| `contracts/` | Registry types, `MailTransport`, `AppNotificationStore`, `InboxStore`, `NotificationPreferenceStore` |
+| `contracts/` | Registry types, `MailTransport`, `AppNotificationStore`, `InboxStore`, `NotificationPreferenceStore`, `MailDeliveryTracker` |
 | `module.json` | Manifest |
 
 Optional stubs:
@@ -57,6 +59,7 @@ Optional stubs:
 | `--with-models` / `--with-stubs` | `app/models/app_notification.ts` |
 | `--with-migrations` / `--with-stubs` | `database/migrations/` notifications table |
 | `--with-adapters` / `--with-stubs` | `app/adapters/notification.ts`, mail transport, Lucid store, Lucid preference store |
+| `--with-routes` / `--with-stubs` | `start/mail_delivery.ts` (tracked mail messenger) |
 | `--with-tests` | `modules/notification/tests/` |
 
 Peer model: `#models/app_notification`. The Lucid model uses table
@@ -203,6 +206,23 @@ its logging tracker with one that writes your records.
 A tracker error goes to `onError` and never sends the email again.
 The stub messenger keeps mail in memory. With a job queue
 (`@adonisjs/queue`), call `sendTracked` from the job instead.
+
+## Mail recipients
+
+Module events carry the user DTO, not a Lucid model. Build mail from it:
+
+```ts
+import { formatMailAddress, toMailRecipient } from '#modules/notification/recipient'
+
+emitter.on('Account:Closed', async (closed) => {
+  const to = formatMailAddress(toMailRecipient(closed)) // "Ada Lovelace" <ada@example.com>
+  await mail.sendLater((m) => m.to(to).subject('Your account is closed'))
+})
+```
+
+`toMailRecipient` joins `firstName` and `lastName` (or gives `name:
+null`). `formatMailAddress` escapes quotes and removes line breaks in
+the name, so a name cannot add mail headers.
 
 ## Contracts you must implement
 
