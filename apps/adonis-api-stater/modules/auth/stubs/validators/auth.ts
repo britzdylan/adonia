@@ -22,15 +22,20 @@ export const activateValidator = vine.create(
   })
 )
 
+/**
+ * No `exists` rule on the two "send me an email" validators: a different
+ * response for an unknown address would tell anyone who has an account.
+ * AuthService ignores unknown addresses instead.
+ */
 export const resendActivationValidator = vine.create(
   vine.object({
-    email: vine.string().email().normalizeEmail().exists({ table: 'users', column: 'email' }),
+    email: vine.string().email().normalizeEmail(),
   })
 )
 
 export const requestPasswordResetValidator = vine.create(
   vine.object({
-    email: vine.string().email().normalizeEmail().exists({ table: 'users', column: 'email' }),
+    email: vine.string().email().normalizeEmail(),
   })
 )
 

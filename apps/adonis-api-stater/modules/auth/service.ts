@@ -103,8 +103,24 @@ export class AuthService extends ApiService {
     return verified
   }
 
+  /**
+   * Sends a verification link again. Does nothing for an unknown address,
+   * a verified account, or an account that does not sign in by email, so
+   * the response cannot tell a caller which addresses are registered.
+   */
+  public async requestVerificationEmail(email: string): Promise<void> {
+    const user = await this.users.findByEmail(email)
+    if (!user || user.emailVerifiedAt !== null || user.authMethod !== 'email') return
+    await this.createNewVerificationToken(user)
+  }
+
+  /**
+   * Starts a password reset. Does nothing for an unknown address, so the
+   * response cannot tell a caller which addresses are registered.
+   */
   public async requestPasswordReset(email: string): Promise<void> {
-    const user = await this.users.findByEmailOrFail(email)
+    const user = await this.users.findByEmail(email)
+    if (!user) return
     const reset = await this.passwordResets.createForUser(
       user.id,
       this.options.passwordResetTtl

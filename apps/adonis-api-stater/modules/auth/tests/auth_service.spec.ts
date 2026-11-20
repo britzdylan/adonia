@@ -143,3 +143,34 @@ test.group('AuthService - password reset', () => {
     )
   })
 })
+
+test.group('AuthService - requests that must not reveal accounts', () => {
+  test('password reset for an unknown address does nothing and does not throw', async () => {
+    const { service, passwordResets, emissions } = makeAuth()
+    await service.requestPasswordReset('nobody@test.com')
+    assert.equal(passwordResets.createCalls.length, 0)
+    assert.equal(emissions.length, 0)
+  })
+
+  test('verification email is sent again to an unverified email account', async () => {
+    const { service, users, emissions } = makeAuth()
+    const user = await users.createEmailUser({ email: 'a@test.com', password: 'secret' })
+    await service.requestVerificationEmail('a@test.com')
+    assert.ok(users.users.get(user.id)?.emailVerificationToken)
+    assert.deepEqual(
+      emissions.map((e) => e.event),
+      ['Auth:CreateNewVerificationToken']
+    )
+  })
+
+  test('verification email does nothing for unknown or verified addresses', async () => {
+    const { service, users, emissions } = makeAuth()
+    const user = await users.createEmailUser({ email: 'a@test.com', password: 'secret' })
+    await users.save({ ...user, emailVerifiedAt: new Date() })
+
+    await service.requestVerificationEmail('nobody@test.com')
+    await service.requestVerificationEmail('a@test.com')
+
+    assert.equal(emissions.length, 0)
+  })
+})
