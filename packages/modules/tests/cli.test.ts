@@ -68,7 +68,7 @@ function fakeAdonis(dir: string): void {
 
 describe('schema drift guard', () => {
   it('parses every fixture module.json', () => {
-    const names = ['api', 'auth', 'account', 'notification', 'creem', 'subscription', 'outbound']
+    const names = ['api', 'auth', 'account', 'notification', 'creem', 'subscription', 'outbound', 'chat', 'sanitize']
     for (const name of names) {
       const raw = JSON.parse(readFileSync(join(fixture, name, 'module.json'), 'utf8'))
       const parsed = moduleManifestSchema.safeParse(raw)

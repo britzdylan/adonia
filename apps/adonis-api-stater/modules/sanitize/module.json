@@ -1,0 +1,16 @@
+{
+  "name": "sanitize",
+  "description": "Strips HTML from strings and nested JSON input, with depth and size limits",
+  "files": ["sanitize.ts", "module.json"],
+  "stubs": [],
+  "dependencies": {
+    "sanitize-html": "^2.18.2"
+  },
+  "registryDependencies": ["api"],
+  "peerModels": [],
+  "configKeys": [],
+  "env": [],
+  "events": [],
+  "hostFacingExceptions": [],
+  "hostTests": []
+}
