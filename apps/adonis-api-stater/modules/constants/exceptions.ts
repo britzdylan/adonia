@@ -9,6 +9,7 @@ import type { StatusCodeEntry } from '#modules/types/constants'
  * - FORBIDDEN — authorization failures
  * - TOO_MANY_ATTEMPTS, TOO_MANY_REQUESTS — rate limiting
  * - PAYLOAD_TOO_LARGE — file upload limits (HTTP 413)
+ * - VALIDATION_ERROR — the API exception handler, for Vine messages that are not codes
  */
 export const exceptions = {
   INVALID_CREDENTIALS: {
@@ -58,6 +59,18 @@ export const exceptions = {
   TOO_MANY_REQUESTS: {
     status: 429,
     code: 'E_TOO_MANY_REQUESTS',
+  },
+  VALIDATION_ERROR: {
+    status: 422,
+    code: 'E_VALIDATION_ERROR',
+  },
+  NOTIFICATION_NOT_FOUND: {
+    status: 404,
+    code: 'E_NOTIFICATION_NOT_FOUND',
+  },
+  ACCOUNT_CLOSURE_FAILED: {
+    status: 502,
+    code: 'E_ACCOUNT_CLOSURE_FAILED',
   },
 } as const satisfies Record<string, StatusCodeEntry>
 
