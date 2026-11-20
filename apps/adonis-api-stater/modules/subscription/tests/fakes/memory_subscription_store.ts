@@ -37,6 +37,15 @@ export class MemorySubscriptionStore implements SubscriptionStore {
     return matches[0] ?? null
   }
 
+  async findNotEndedByUserId(userId: number, endedStatuses: string[]): Promise<Subscription[]> {
+    return this.rows.filter(
+      (row) =>
+        row.userId === userId &&
+        row.creemSubscriptionId !== null &&
+        !endedStatuses.includes(row.status)
+    )
+  }
+
   async upsert(snapshot: SubscriptionSnapshot): Promise<void> {
     this.upserts.push(snapshot)
     const index = this.rows.findIndex(

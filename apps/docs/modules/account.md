@@ -8,11 +8,11 @@ password change, and account deletion.
 | Depends on | `api`, `auth` |
 | Env | `APP_KEY` |
 | Peer models | `#models/user` |
-| Events | `Account:UpdateUserProfile`, `Account:UpdateUserEmail`, `Account:ConfirmEmailChange`, `Account:UpdateUserPassword`, `Account:DeleteAccount` |
-| Contracts | `UserStore`, optional `AvatarStorage` |
+| Events | `Account:UpdateUserProfile`, `Account:UpdateUserEmail`, `Account:ConfirmEmailChange`, `Account:UpdateUserPassword`, `Account:DeleteAccount`, `Account:Closed` |
+| Contracts | `UserStore`, optional `AvatarStorage`, optional `AccountClosureStep[]` |
 
-Inbox and marketing-preference HTTP in the example controller are
-host-owned; they are not methods on `AccountService`. See
+Marketing-preference HTTP in the example controller is host-owned.
+The inbox routes call the notification module's `InboxService`. See
 [concepts](../guide/concepts.md).
 
 ## Add it
@@ -120,11 +120,45 @@ Verifies `currentPassword` through `UserStore.verifyPassword`. A
 mismatch throws `E_INVALID_PASSWORD`. On success it hashes and
 stores `newPassword` and emits `Account:UpdateUserPassword`.
 
+### closeAccount
+
+The user closes their own account. Takes `userId` and `password`:
+
+1. Checks the password. A mismatch throws `E_INVALID_PASSWORD`.
+2. Runs each closure step in order (for example, cancel billing).
+3. Calls `deleteAccount`.
+4. Emits `Account:Closed` with `{ userId, email, firstName, lastName }`.
+
+If a step throws, nothing is deleted, so a user never keeps paying
+for an account that is gone. A step's `ApiException` is thrown as it
+is; any other error becomes `E_ACCOUNT_CLOSURE_FAILED` (502).
+
+`Account:Closed` carries the address because the user row no longer
+exists when listeners run. Send the confirmation email from it.
+
+Closure steps are the fourth constructor argument (and of
+`createAccountService`):
+
+```ts
+import { createAccountService } from '#adapters/account'
+import { cancelSubscriptionsOnClose } from '#modules/subscription/closure_step'
+import { defaultAccountOptions } from '#modules/account/options'
+import subscriptionService from '#services/subscription_service'
+
+const account = createAccountService(undefined, defaultAccountOptions, [
+  cancelSubscriptionsOnClose(subscriptionService),
+])
+```
+
+The controller stub's `DELETE /api/v1/account` route calls
+`closeAccount` and needs `password` in the body.
+
 ### deleteAccount
 
 Loads the user, deletes the avatar object when `avatarKey` is set,
 deletes the user row, and emits `Account:DeleteAccount` with
-`{ userId }`.
+`{ userId }`. No password check and no closure steps: use it for
+admin and internal work, and `closeAccount` for a user's own request.
 
 ## Contracts you must implement
 
@@ -152,6 +186,20 @@ interface AvatarStorage {
 The Drive stub deletes by key. Swap it for S3, local disk, or a
 no-op in tests.
 
+### AccountClosureStep
+
+Optional. A step that must succeed before `closeAccount` deletes
+anything.
+
+```ts
+type AccountClosureStep = {
+  name: string
+  run(user: User): Promise<void>
+}
+```
+
+The subscription module ships one: `cancelSubscriptionsOnClose`.
+
 ## Events
 
 Import `#modules/account/events`. Events fire only when listed under
@@ -164,6 +212,7 @@ Import `#modules/account/events`. Events fire only when listed under
 | `Account:ConfirmEmailChange` | `User` |
 | `Account:UpdateUserPassword` | `User` |
 | `Account:DeleteAccount` | `{ userId: number }` |
+| `Account:Closed` | `{ userId; email; firstName; lastName }` |
 
 Listen for `Account:UpdateUserEmail` to send the confirmation
 message to `newEmail`, not the current address.
@@ -179,6 +228,7 @@ in the envelope `message` field.
 | Email already taken | `E_EMAIL_EXISTS` |
 | Bad or expired pending-email token | `E_INVALID_TOKEN` |
 | Current password mismatch | `E_INVALID_PASSWORD` |
+| A closure step failed | `E_ACCOUNT_CLOSURE_FAILED` |
 
 `module.json` also lists `PAYLOAD_TOO_LARGE` (`E_PAYLOAD_TOO_LARGE`,
 413) for host upload limits. The service doesn't throw it.
@@ -197,13 +247,13 @@ commented out until you enable named middleware from
 | POST | `/api/v1/account/email` | `replaceEmail` | Yes |
 | POST | `/api/v1/account/email/confirm` | `confirmEmailChange` | Yes |
 | POST | `/api/v1/account/password` | `replacePassword` | Yes |
-| DELETE | `/api/v1/account` | `deleteAccount` | Yes |
+| DELETE | `/api/v1/account` | `deleteAccount` | Yes (`closeAccount`) |
 | GET / PUT | `/api/v1/account/notifications` | preference columns on `User` | No |
-| GET / PATCH / POST | `/api/v1/account/inbox…` | Lucid `AppNotification` | No |
+| GET / PATCH / POST | `/api/v1/account/inbox…` | `InboxService` (notification) | No |
 
-Marketing preference columns (`emailMarketing` and related) and
-inbox CRUD live on the example user model and notification model.
-They are host HTTP, not domain methods.
+Marketing preference columns (`emailMarketing` and related) live on
+the example user model; the routes are host HTTP. The inbox routes
+need the notification module with its adapters and model.
 
 Limiter usage (`accountLimiter`, 60/min) is commented out until you
 install `@adonisjs/limiter` from the auth start stub.

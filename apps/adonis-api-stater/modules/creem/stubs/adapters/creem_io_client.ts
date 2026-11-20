@@ -42,6 +42,10 @@ export class CreemIoClient implements CreemClient {
     return { portalUrl: portal.customerPortalLink }
   }
 
+  async cancelSubscription(subscriptionId: string) {
+    await this.client.subscriptions.cancel({ subscriptionId, mode: 'immediate' })
+  }
+
   async listTransactions(customerId: string, limit: number) {
     const result = await this.client.transactions.list({ customerId, limit })
     return {

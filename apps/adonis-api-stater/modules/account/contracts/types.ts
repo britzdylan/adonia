@@ -2,6 +2,7 @@
  * Account module input types.
  * User persistence uses shared #modules/contracts UserStore / User.
  */
+import type { User } from '#modules/contracts/index'
 
 export type UpdateProfileInput = {
   firstName?: string
@@ -15,6 +16,18 @@ export type UpdateProfileInput = {
 
 export type ReplaceEmailInput = {
   email: string
+}
+
+/**
+ * A step that must succeed before an account is closed, for example
+ * cancelling billing. When `run` throws, the account is not deleted.
+ * Host or other modules supply these (see the subscription module's
+ * `cancelSubscriptionsOnClose`).
+ */
+export type AccountClosureStep = {
+  /** Short name for logs and errors, for example `subscriptions`. */
+  name: string
+  run(user: User): Promise<void>
 }
 
 export type ReplacePasswordInput = {

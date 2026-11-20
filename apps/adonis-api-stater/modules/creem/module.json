@@ -22,7 +22,7 @@
     "CREEM_TEST_MODE",
     "CREEM_SUCCESS_URL"
   ],
-  "events": ["Creem:CheckoutCreated", "Creem:PortalLinkCreated"],
+  "events": ["Creem:CheckoutCreated", "Creem:PortalLinkCreated", "Creem:SubscriptionCanceled"],
   "hostFacingExceptions": [],
   "hostTests": []
 }

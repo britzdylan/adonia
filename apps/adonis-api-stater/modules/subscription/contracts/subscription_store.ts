@@ -12,4 +12,10 @@ export interface SubscriptionStore {
   findActiveByUserId(userId: number, activeStatuses: string[]): Promise<Subscription | null>
 
   upsert(snapshot: SubscriptionSnapshot): Promise<void>
+
+  /**
+   * Every subscription of the user that has a Creem subscription id and a
+   * status not in `endedStatuses`: the ones that can still charge the user.
+   */
+  findNotEndedByUserId(userId: number, endedStatuses: string[]): Promise<Subscription[]>
 }

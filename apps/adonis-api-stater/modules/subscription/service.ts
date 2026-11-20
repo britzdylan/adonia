@@ -20,6 +20,7 @@ export class SubscriptionService extends ApiService {
   namespace = 'subscription'
 
   private activeStatuses: string[]
+  private endedStatuses: string[]
 
   constructor(
     private subscriptions: SubscriptionStore,
@@ -28,6 +29,7 @@ export class SubscriptionService extends ApiService {
   ) {
     super()
     this.activeStatuses = config.activeStatuses ?? defaultSubscriptionOptions.activeStatuses
+    this.endedStatuses = config.endedStatuses ?? defaultSubscriptionOptions.endedStatuses
   }
 
   /**
@@ -67,6 +69,23 @@ export class SubscriptionService extends ApiService {
   async isActive(userId: number): Promise<boolean> {
     const sub = await this.subscriptions.findActiveByUserId(userId, this.activeStatuses)
     return sub !== null
+  }
+
+  /**
+   * Cancels every subscription of the user that can still charge them.
+   * Stops at the first failure and throws it, so a caller (for example
+   * account closure) can refuse to continue while billing is still live.
+   * Stored state is updated by the webhooks that follow.
+   */
+  async cancelAllForUser(userId: number): Promise<number> {
+    const subscriptions = await this.subscriptions.findNotEndedByUserId(userId, this.endedStatuses)
+    let canceled = 0
+    for (const subscription of subscriptions) {
+      if (!subscription.creemSubscriptionId) continue
+      await this.creem.cancelSubscription(subscription.creemSubscriptionId)
+      canceled++
+    }
+    return canceled
   }
 
   /**

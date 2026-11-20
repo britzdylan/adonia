@@ -35,3 +35,9 @@ export const updateNotificationsValidator = vine.create(
     emailWeeklyDigest: vine.boolean().optional(),
   })
 )
+
+export const closeAccountValidator = vine.create(
+  vine.object({
+    password: vine.string(),
+  })
+)

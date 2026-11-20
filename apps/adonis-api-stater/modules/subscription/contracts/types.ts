@@ -36,4 +36,6 @@ export type SubscriptionSnapshot = {
 export type SubscriptionConfig = {
   /** Statuses treated as entitled. Defaults from options.ts. */
   activeStatuses?: string[]
+  /** Statuses that can no longer charge the user. Defaults from options.ts. */
+  endedStatuses?: string[]
 }

@@ -5,5 +5,6 @@ declare module '@adonisjs/core/types' {
   interface EventsList {
     'Creem:CheckoutCreated': { userId: number; productId: string; checkoutUrl: string }
     'Creem:PortalLinkCreated': { customerId: string }
+    'Creem:SubscriptionCanceled': { subscriptionId: string }
   }
 }

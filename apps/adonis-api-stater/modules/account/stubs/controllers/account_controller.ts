@@ -4,26 +4,27 @@
  * Copy Vine provider (`providers/vine_provider.ts`) and register it in
  * adonisrc.ts so unique/validPassword macros load (same provider as auth).
  * Authenticated routes need named auth middleware from start/kernel.ts.
- * Inbox methods need `#models/app_notification` from
- * `adonia add notification --with-models`.
+ * Inbox methods need the notification module with its adapters and model
+ * (`adonia add notification --with-adapters --with-models`).
  */
 import type { HttpContext } from '@adonisjs/core/http'
-import { DateTime } from 'luxon'
 import { createAccountService } from '#adapters/account'
 import { toUser } from '#adapters/map_user'
 import { toPublicUser } from '#modules/contracts/index'
 import { responseCodes } from '#constants/responseCodes'
 import User from '#models/user'
-import AppNotification from '#models/app_notification'
+import { createInboxService } from '#adapters/notification'
 import {
   updateProfileValidator,
   replaceEmailValidator,
   replacePasswordValidator,
+  closeAccountValidator,
   confirmEmailChangeValidator,
   updateNotificationsValidator,
 } from '../validators/account.ts'
 
 const account = createAccountService()
+const inbox = createInboxService()
 
 export default class AccountController {
   async getAuthenticatedUser(ctx: HttpContext) {
@@ -90,7 +91,8 @@ export default class AccountController {
 
   async deleteAccount(ctx: HttpContext) {
     const user = ctx.auth.getUserOrFail()
-    await account.deleteAccount(user.id)
+    const { password } = await ctx.request.validateUsing(closeAccountValidator)
+    await account.closeAccount(user.id, password)
     return ctx.response.ok(
       await ctx.respond({
         success: true,
@@ -146,24 +148,18 @@ export default class AccountController {
 
   async getInboxNotifications(ctx: HttpContext) {
     const user = ctx.auth.getUserOrFail()
-    const rows = await AppNotification.query()
-      .where('userId', user.id)
-      .orderBy('createdAt', 'desc')
     return ctx.response.ok(
       await ctx.respond({
         success: true,
         message: responseCodes.INBOX_FETCHED.code,
-        data: rows,
+        data: await inbox.getInbox(user.id),
       })
     )
   }
 
   async markAllNotificationsRead(ctx: HttpContext) {
     const user = ctx.auth.getUserOrFail()
-    await AppNotification.query()
-      .where('userId', user.id)
-      .whereNull('readAt')
-      .update({ readAt: DateTime.now().toSQL() })
+    await inbox.markAllRead(user.id)
     return ctx.response.ok(
       await ctx.respond({
         success: true,
@@ -175,12 +171,7 @@ export default class AccountController {
 
   async markNotificationRead(ctx: HttpContext) {
     const user = ctx.auth.getUserOrFail()
-    const notification = await AppNotification.query()
-      .where('id', ctx.params.id)
-      .where('userId', user.id)
-      .firstOrFail()
-    notification.readAt = DateTime.now()
-    await notification.save()
+    const notification = await inbox.markRead(user.id, String(ctx.params.id))
     return ctx.response.ok(
       await ctx.respond({
         success: true,

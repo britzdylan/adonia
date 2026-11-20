@@ -90,6 +90,19 @@ a subscription, returns the start of the current UTC month.
 
 True when `findActiveByUserId` finds a row in `activeStatuses`.
 
+### cancelAllForUser
+
+Cancels, through `CreemService.cancelSubscription`, every subscription
+of the user that has a Creem id and a status not in `endedStatuses`
+(default `canceled`, `expired`). Returns how many it cancelled. It
+stops at the first failure and throws it. Stored rows change when the
+webhooks that follow arrive, not here.
+
+`cancelSubscriptionsOnClose(subscriptionService)` from
+`#modules/subscription/closure_step` wraps it as an account closure
+step, so the account module's `closeAccount` refuses to delete an
+account while billing is still live. See [`account`](./account.md).
+
 ### syncFromWebhook
 
 Pass the raw webhook body and signature. The Creem client verifies
@@ -130,6 +143,7 @@ Host persistence for subscription rows. The store never sees
 | `findCurrentByUserId(userId)` | Latest subscription or `null` |
 | `findActiveByUserId(userId, activeStatuses)` | Entitled row or `null` |
 | `upsert(snapshot)` | Insert or update from a webhook snapshot |
+| `findNotEndedByUserId(userId, endedStatuses)` | Rows with a Creem id that can still charge the user |
 
 The Lucid stub maps `SubscriptionSnapshot` onto the model
 (`customerId` → `creemCustomerId`, `productId` → `creemProductId`,

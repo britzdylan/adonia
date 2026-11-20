@@ -5,6 +5,7 @@
     "service.ts",
     "events.ts",
     "options.ts",
+    "closure_step.ts",
     "contracts/**",
     "module.json"
   ],
