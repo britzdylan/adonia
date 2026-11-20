@@ -6,13 +6,15 @@
     "options.ts",
     "preferences.ts",
     "inbox.ts",
+    "delivery.ts",
     "contracts/**",
     "module.json"
   ],
   "stubs": [
     "stubs/models/app_notification.ts",
     "stubs/migrations/*.ts",
-    "stubs/adapters/**/*"
+    "stubs/adapters/**/*",
+    "stubs/start/**/*"
   ],
   "dependencies": {},
   "registryDependencies": ["api"],
