@@ -2,7 +2,8 @@
 
 `notification` is a channel-agnostic dispatcher. You supply a
 registry of types; the service fans out to email and in-app
-transports.
+transports. It also has an optional preference gate for email and
+the in-app inbox.
 
 | Field | Value |
 |-------|-------|
@@ -10,9 +11,9 @@ transports.
 | Env | none |
 | Peer models | `#models/app_notification` |
 | Events | none |
-| Contracts | host-owned registry, `MailTransport`, `AppNotificationStore` |
+| Contracts | host-owned registry, `MailTransport`, `AppNotificationStore`, `InboxStore`, `NotificationPreferenceStore` |
 
-It does not own templates, preferences, or type names.
+It does not own templates, preference names, or type names.
 `NotificationService` does not extend `ApiService`. See
 [module interface](../guide/module-interface.md).
 
@@ -27,9 +28,8 @@ npx adonia add notification --with-models --with-migrations
 npx adonia add notification --with-stubs
 ```
 
-There are no controllers or routes. Inbox HTTP in the account stub
-controller reads `#models/app_notification` after you copy the
-notification model.
+There are no controllers or routes. The account stub controller's
+inbox routes call `InboxService` through `#adapters/notification`.
 
 `--with-adapters` copies `AdonisMailTransport`, which needs
 `@adonisjs/mail`. `add` prints `node ace add @adonisjs/mail` when
@@ -44,8 +44,10 @@ Plain `add` copies the domain slice to `modules/notification/`:
 | Path | Role |
 |------|------|
 | `service.ts` | `NotificationService` |
+| `preferences.ts` | `PreferenceAwareNotificationService` |
+| `inbox.ts` | `InboxService` |
 | `options.ts` | `onWarn` / `onError` callbacks |
-| `contracts/` | Registry types, `MailTransport`, `AppNotificationStore` |
+| `contracts/` | Registry types, `MailTransport`, `AppNotificationStore`, `InboxStore`, `NotificationPreferenceStore` |
 | `module.json` | Manifest |
 
 Optional stubs:
@@ -54,7 +56,7 @@ Optional stubs:
 |------|-------------|
 | `--with-models` / `--with-stubs` | `app/models/app_notification.ts` |
 | `--with-migrations` / `--with-stubs` | `database/migrations/` notifications table |
-| `--with-adapters` / `--with-stubs` | `app/adapters/notification.ts`, mail transport, Lucid store |
+| `--with-adapters` / `--with-stubs` | `app/adapters/notification.ts`, mail transport, Lucid store, Lucid preference store |
 | `--with-tests` | `modules/notification/tests/` |
 
 Peer model: `#models/app_notification`. The Lucid model uses table
@@ -122,6 +124,52 @@ The return map always includes both channels:
 Email calls `mail.sendLater(definition.email(payload))`. In-app
 calls `appNotifications.create(definition.app(payload))`.
 
+## Email preferences
+
+`PreferenceAwareNotificationService` wraps the dispatcher. It sends a
+governed email only when the user has its preference on. You map each
+type to a preference name, or to `null` for "always send" (account and
+security mail). Types you leave out are always sent.
+
+```ts
+import { createPreferenceAwareNotificationService } from '#adapters/notification'
+
+const notifications = createPreferenceAwareNotificationService(registry, {
+  verify_email: null,
+  weekly_digest: 'emailWeeklyDigest',
+})
+
+await notifications.send('weekly_digest', ['email', 'app'], { userId: user.id, email: user.email })
+```
+
+A governed email is opt-in. The email channel is dropped when:
+
+- the payload has no numeric `userId` (`onWarn`)
+- the user does not exist or has the preference off
+- the preference lookup throws (`onError`)
+
+The other channels are sent as asked. If no channel is left, the
+result is `{ email: 'skipped', app: 'skipped' }`.
+
+The Lucid stub `LucidNotificationPreferenceStore` reads a boolean
+attribute of `#models/user`, for example `emailWeeklyDigest` on the
+auth User stub. It reads only the names in your map.
+
+## Inbox
+
+`InboxService` is the user's in-app inbox. It extends `ApiService`
+(namespace `notification`) and emits no events.
+
+| Method | Returns |
+|--------|---------|
+| `getInbox(userId)` | `{ notifications, unreadCount }`: unread, newest first, at most `pageSize` (default 50) |
+| `markRead(userId, id)` | The notification. Throws `E_NOTIFICATION_NOT_FOUND` (404) when the user has no notification with that id |
+| `markAllRead(userId)` | How many were marked |
+
+Every store method takes the `userId`, so one user cannot read or
+mark another user's notification. Build it with `createInboxService()`
+from `#adapters/notification`.
+
 ## Contracts you must implement
 
 Skip `--with-adapters` only when you provide mail and in-app
@@ -175,8 +223,31 @@ type AppNotificationData = {
 }
 ```
 
-Preference flags on `User` (marketing, product updates) are host
-columns. This store does not read them.
+### InboxStore
+
+The read side of the same table. The Lucid stub
+`LucidAppNotificationStore` implements both stores.
+
+```ts
+interface InboxStore {
+  listUnread(userId: number, limit: number): Promise<InboxNotification[]>
+  countUnread(userId: number): Promise<number>
+  markRead(userId: number, id: string, readAt: Date): Promise<InboxNotification | null>
+  markAllRead(userId: number, readAt: Date): Promise<number>
+}
+```
+
+### NotificationPreferenceStore
+
+Only for `PreferenceAwareNotificationService`.
+
+```ts
+interface NotificationPreferenceStore {
+  isEnabled(userId: number, preference: string): Promise<boolean>
+}
+```
+
+Return `false` for an unknown user or preference.
 
 ## Wiring from other modules
 
