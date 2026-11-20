@@ -1,6 +1,6 @@
 {
   "name": "adonis-api-stater",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -103,7 +103,7 @@
     "@tuyau/core": "^1.2.2",
     "@types/sanitize-html": "^2.16.2",
     "@vinejs/vine": "^4.4.0",
-    "adonia": "^0.2.3",
+    "adonia": "^0.3.0",
     "better-sqlite3": "^13.0.3",
     "creem_io": "^1.0.0",
     "luxon": "^3.7.2",
