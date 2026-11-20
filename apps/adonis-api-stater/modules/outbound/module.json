@@ -1,0 +1,14 @@
+{
+  "name": "outbound",
+  "description": "Safe outbound HTTP to user-supplied URLs (SSRF guard, pinned DNS, no redirects)",
+  "files": ["url_safety.ts", "request.ts", "module.json"],
+  "stubs": ["stubs/validators/**/*"],
+  "dependencies": {},
+  "registryDependencies": ["api"],
+  "peerModels": [],
+  "configKeys": [],
+  "env": [],
+  "events": [],
+  "hostFacingExceptions": [],
+  "hostTests": []
+}

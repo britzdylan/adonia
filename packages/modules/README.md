@@ -62,6 +62,7 @@ or add those files yourself.
 | `notification` | Multi-channel dispatcher with a host-owned registry |
 | `creem` | Creem checkout, portal, invoices, webhooks |
 | `subscription` | Subscription state synced from Creem webhooks |
+| `outbound` | Safe HTTP requests to user-supplied URLs (SSRF guard) |
 
 `add` walks `registryDependencies`. For example,
 `adonia add subscription` installs `creem` and core first when they

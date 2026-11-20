@@ -24,6 +24,8 @@ export type ApiErrorBody = {
   message: string
   status?: number
   errors?: unknown
+  /** Extra details next to the code, from `ApiException` `data`. */
+  data?: unknown
 }
 
 export type ApiResult<T> =

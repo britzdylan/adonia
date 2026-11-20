@@ -13,6 +13,7 @@ Each module is source in the host after `add`. You edit it there.
 | `notification` | Feature | Multi-channel dispatcher with a host-owned registry |
 | `creem` | Feature | Creem checkout, portal, invoices, webhooks |
 | `subscription` | Feature | Subscription state synced from Creem webhooks |
+| `outbound` | Feature | Safe HTTP requests to user-supplied URLs |
 
 `init` copies **core**. Feature modules are separate `add`s.
 `add` walks `registryDependencies` and copies missing packages
@@ -72,6 +73,7 @@ api (+ types, constants, contracts)
  ├── auth
  │    └── account
  ├── notification
+ ├── outbound
  └── creem
       └── subscription
 ```

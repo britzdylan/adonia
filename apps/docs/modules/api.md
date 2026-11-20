@@ -211,6 +211,27 @@ import { exceptions } from '#constants/exceptions'
 throw ApiException.from(exceptions.INVALID_TOKEN)
 ```
 
+Attach details for the client with `withData`. `message` stays the
+code; the details go in `data`:
+
+```ts
+throw ApiException.withData(exceptions.FORBIDDEN, { reason: 'paused' })
+// → { success: false, message: 'E_FORBIDDEN', status: 403, data: { reason: 'paused' } }
+```
+
+Three rules keep `message` a code for every error:
+
+| Error | Rendered as |
+|-------|-------------|
+| Vine validation failure | `E_VALIDATION_ERROR`, or the first field message when it is already a code that starts with `E_VALIDATION_ERROR_` (from a custom rule). Vine's sentences stay in `errors`. |
+| `E_INVALID_CREDENTIALS` (`@adonisjs/auth`) | The envelope, not the package's own JSON shape |
+| `E_TOO_MANY_REQUESTS` (`@adonisjs/limiter`) | The envelope, with the limiter's `Retry-After` and `X-RateLimit-*` headers kept |
+
+The last two errors render themselves in their package. The handler
+matches them by code in `envelopedErrorCodes`, so the module does not
+import either package. Add codes in a host subclass for other
+self-rendering errors.
+
 ## Exception catalog
 
 `#constants/exceptions` is the shared code table. Feature services
@@ -232,6 +253,9 @@ with `defineCodes` in `app/constants/`.
 | `EMAIL_EXISTS` | 409 | `E_EMAIL_EXISTS` | `account` |
 | `TOO_MANY_ATTEMPTS` | 429 | `E_TOO_MANY_ATTEMPTS` | Host limiter |
 | `TOO_MANY_REQUESTS` | 429 | `E_TOO_MANY_REQUESTS` | Host limiter |
+| `VALIDATION_ERROR` | 422 | `E_VALIDATION_ERROR` | Exception handler |
+| `NOTIFICATION_NOT_FOUND` | 404 | `E_NOTIFICATION_NOT_FOUND` | `notification` (inbox) |
+| `ACCOUNT_CLOSURE_FAILED` | 502 | `E_ACCOUNT_CLOSURE_FAILED` | `account` (`closeAccount`) |
 
 The exception handler puts `error.code` (or `error.message`) in
 `message`. Clients therefore see `E_INVALID_TOKEN`, not a localized

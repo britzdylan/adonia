@@ -4,6 +4,7 @@ import { CreemService } from '#modules/creem/service'
 import { SubscriptionService } from '#modules/subscription/service'
 import { FakeCreemClient, makeNormalizedSub } from '#modules/creem/tests/fakes/fake_creem_client'
 import { MemorySubscriptionStore } from '#modules/subscription/tests/fakes/memory_subscription_store'
+import { cancelSubscriptionsOnClose } from '#modules/subscription/closure_step'
 
 function makeBilling(productPlans: Record<string, string> = { prod_pro: 'pro' }) {
   const client = new FakeCreemClient()
@@ -185,5 +186,53 @@ test.group('SubscriptionService - syncFromWebhook', () => {
     assert.equal(await subscriptions.getUserPlan(1), 'pro')
     const current = await subscriptions.getSubscription(1)
     assert.equal(current?.creemSubscriptionId, 'sub_new')
+  })
+})
+
+test.group('SubscriptionService - cancelAllForUser', () => {
+  const snapshot = (id: string, status: string, userId = 1) => ({
+    id,
+    userId,
+    customerId: 'c',
+    productId: 'prod_pro',
+    productName: 'Pro',
+    status,
+    currentPeriodStart: new Date('2024-01-01'),
+    currentPeriodEnd: new Date('2024-02-01'),
+    canceledAt: null,
+  })
+
+  test('cancels only the user subscriptions that have not ended', async () => {
+    const { subscriptions, store, client } = makeBilling()
+    await store.upsert(snapshot('sub_live', 'active'))
+    await store.upsert(snapshot('sub_paused', 'scheduled_cancel'))
+    await store.upsert(snapshot('sub_done', 'canceled'))
+    await store.upsert(snapshot('sub_other', 'active', 2))
+
+    const count = await subscriptions.cancelAllForUser(1)
+
+    assert.equal(count, 2)
+    assert.deepEqual(client.cancelCalls, ['sub_live', 'sub_paused'])
+  })
+
+  test('throws when the provider refuses, so the caller can stop', async () => {
+    const { subscriptions, store, client } = makeBilling()
+    await store.upsert(snapshot('sub_live', 'active'))
+    client.cancelError = new Error('provider down')
+
+    await assert.rejects(() => subscriptions.cancelAllForUser(1), /provider down/)
+  })
+
+  test('cancelSubscriptionsOnClose runs the cancel for the closing user', async () => {
+    const calls: number[] = []
+    const step = cancelSubscriptionsOnClose({
+      cancelAllForUser: async (userId: number) => {
+        calls.push(userId)
+        return 0
+      },
+    })
+    await step.run({ id: 7 })
+    assert.equal(step.name, 'subscriptions')
+    assert.deepEqual(calls, [7])
   })
 })

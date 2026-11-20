@@ -54,6 +54,7 @@ export default defineConfig({
             { text: 'notification', link: '/modules/notification' },
             { text: 'creem', link: '/modules/creem' },
             { text: 'subscription', link: '/modules/subscription' },
+            { text: 'outbound', link: '/modules/outbound' },
           ],
         },
       ],

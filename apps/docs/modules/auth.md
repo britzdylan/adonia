@@ -97,6 +97,15 @@ Re-issues a verification token for an existing user and emits
 `Auth:CreateNewVerificationToken`. Hosts that resend activation email
 call this behind their own rate limit.
 
+### requestVerificationEmail
+
+Takes an email address. For an unverified email-auth account it calls
+`createNewVerificationToken`. For an unknown address, a verified
+account, or a social-login account it does nothing and does not
+throw. The response is the same in every case, so the route cannot
+tell a caller which addresses have an account. The controller stub's
+`activate/request` route uses it.
+
 ### loginByEmail
 
 Verifies credentials through `UserStore.verifyCredentials`, opens a
@@ -115,9 +124,12 @@ tokens throw `E_INVALID_TOKEN`.
 
 ### requestPasswordReset
 
-Loads the user by email (`findByEmailOrFail`), creates a reset row,
-and emits `Auth:RequestPasswordReset` with `{ user, token }`. Listen
-for that event to send mail. The method returns `void` on success.
+Loads the user by email, creates a reset row, and emits
+`Auth:RequestPasswordReset` with `{ user, token }`. Listen for that
+event to send mail. For an unknown address it does nothing and does
+not throw, so the route cannot tell a caller which addresses have an
+account. The validator stubs for these two routes therefore have no
+`exists` rule.
 
 ### validatePasswordResetToken
 

@@ -7,11 +7,7 @@
  * Logout needs named auth middleware from start/kernel.ts.
  */
 import type { HttpContext } from '@adonisjs/core/http'
-import {
-  createAuthService,
-  LucidAccessTokenSession,
-  LucidUserStore,
-} from '#adapters/auth'
+import { createAuthService, LucidAccessTokenSession } from '#adapters/auth'
 import { responseCodes } from '#constants/responseCodes'
 import { toPublicUser } from '#modules/contracts/index'
 import {
@@ -78,8 +74,7 @@ export default class AuthController {
 
   async sendAccountActivationEmail(ctx: HttpContext) {
     const { email } = await ctx.request.validateUsing(resendActivationValidator)
-    const user = await new LucidUserStore().findByEmailOrFail(email)
-    await auth.createNewVerificationToken(user)
+    await auth.requestVerificationEmail(email)
     return ctx.response.ok(
       await ctx.respond({
         success: true,

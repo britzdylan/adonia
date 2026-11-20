@@ -21,6 +21,7 @@ const modulesConfig: Record<string, ModelsTypes.ModuleActionConfig> = {
     'Account:ConfirmEmailChange',
     'Account:UpdateUserPassword',
     'Account:DeleteAccount',
+    'Account:Closed',
     ],
   },
   creem: {
@@ -28,6 +29,7 @@ const modulesConfig: Record<string, ModelsTypes.ModuleActionConfig> = {
     emits: [
     'Creem:CheckoutCreated',
     'Creem:PortalLinkCreated',
+    'Creem:SubscriptionCanceled',
     ],
   },
   subscription: {

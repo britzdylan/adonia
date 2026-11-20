@@ -50,6 +50,15 @@ export class LucidSubscriptionStore implements SubscriptionStore {
     return row ? toSubscription(row) : null
   }
 
+  async findNotEndedByUserId(userId: number, endedStatuses: string[]): Promise<Subscription[]> {
+    const rows = await SubscriptionModel.query()
+      .where('userId', userId)
+      .whereNotNull('creemSubscriptionId')
+      .whereNotIn('status', endedStatuses)
+      .orderBy('id', 'asc')
+    return rows.map(toSubscription)
+  }
+
   async upsert(snapshot: SubscriptionSnapshot): Promise<void> {
     await SubscriptionModel.updateOrCreate(
       { userId: snapshot.userId, creemSubscriptionId: snapshot.id },

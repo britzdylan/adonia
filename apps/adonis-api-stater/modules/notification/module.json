@@ -4,6 +4,8 @@
   "files": [
     "service.ts",
     "options.ts",
+    "preferences.ts",
+    "inbox.ts",
     "contracts/**",
     "module.json"
   ],

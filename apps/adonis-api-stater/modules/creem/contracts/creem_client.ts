@@ -14,6 +14,12 @@ export interface CreemClient {
 
   createPortalLink(customerId: string): Promise<{ portalUrl: string }>
 
+  /**
+   * Cancels a subscription at once, so it charges nothing more. The webhook
+   * that follows updates the stored subscription state.
+   */
+  cancelSubscription(subscriptionId: string): Promise<void>
+
   listTransactions(
     customerId: string,
     limit: number

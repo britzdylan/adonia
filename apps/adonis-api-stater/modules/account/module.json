@@ -24,7 +24,8 @@
     "Account:UpdateUserEmail",
     "Account:ConfirmEmailChange",
     "Account:UpdateUserPassword",
-    "Account:DeleteAccount"
+    "Account:DeleteAccount",
+    "Account:Closed"
   ],
   "hostFacingExceptions": ["PAYLOAD_TOO_LARGE"],
   "hostTests": ["tests/integration/lucid_adapters.spec.ts"]

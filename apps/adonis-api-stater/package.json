@@ -65,6 +65,7 @@
     "#adapters/notification": "./modules/notification/stubs/adapters/notification.js",
     "#adapters/adonis_mail_transport": "./modules/notification/stubs/adapters/adonis_mail_transport.js",
     "#adapters/lucid_app_notification_store": "./modules/notification/stubs/adapters/lucid_app_notification_store.js",
+    "#adapters/lucid_notification_preference_store": "./modules/notification/stubs/adapters/lucid_notification_preference_store.js",
     "#adapters/creem": "./modules/creem/stubs/adapters/creem.js",
     "#adapters/creem_io_client": "./modules/creem/stubs/adapters/creem_io_client.js",
     "#adapters/subscription": "./modules/subscription/stubs/adapters/subscription.js",

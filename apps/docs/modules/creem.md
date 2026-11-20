@@ -8,7 +8,7 @@ resolution, recent invoices, and webhook verification.
 | Depends on | `api` |
 | npm | `creem_io@^1.0.0` |
 | Env | `CREEM_API_KEY`, `CREEM_WEBHOOK_SECRET`, `CREEM_TEST_MODE`, `CREEM_SUCCESS_URL` |
-| Events | `Creem:CheckoutCreated`, `Creem:PortalLinkCreated` |
+| Events | `Creem:CheckoutCreated`, `Creem:PortalLinkCreated`, `Creem:SubscriptionCanceled` |
 | Contracts | `CreemClient`, host-owned `CreemConfig` |
 
 The service does not import `creem_io` or read env. Subscription
@@ -104,6 +104,12 @@ an `ApiException`). On success it emits `Creem:CheckoutCreated`.
 Creates a customer portal URL for a Creem customer id, emits
 `Creem:PortalLinkCreated`, and returns the URL.
 
+### cancelSubscription
+
+Cancels a Creem subscription at once (`mode: 'immediate'` in the
+`creem_io` stub) and emits `Creem:SubscriptionCanceled`. Stored state
+changes when the `subscription.canceled` webhook arrives.
+
 ### resolveProductPlan
 
 Maps a Creem product id through `config.productPlans`. Unmapped ids
@@ -139,6 +145,7 @@ compatible with subscription webhook snapshots.
 |--------|------|
 | `createCheckout({ successUrl, productId, customerEmail, userId })` | Returns `{ checkoutUrl }` |
 | `createPortalLink(customerId)` | Returns `{ portalUrl }` |
+| `cancelSubscription(subscriptionId)` | Cancels at once |
 | `listTransactions(customerId, limit)` | Returns `{ items: CreemInvoice[] }` |
 | `handleWebhookEvents(rawBody, signature, handlers)` | Verifies and dispatches |
 
@@ -163,6 +170,7 @@ Import `#modules/creem/events`. Events fire only when listed under
 |-------|---------|
 | `Creem:CheckoutCreated` | `{ userId, productId, checkoutUrl }` |
 | `Creem:PortalLinkCreated` | `{ customerId }` |
+| `Creem:SubscriptionCanceled` | `{ subscriptionId }` |
 
 Checkout **completion** is a webhook, not this event. Listen to
 subscription events for entitlement changes.

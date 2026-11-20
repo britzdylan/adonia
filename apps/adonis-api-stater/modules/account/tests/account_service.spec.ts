@@ -130,3 +130,80 @@ test.group('AccountService - password and delete', () => {
     assert.equal(users.users.has(user.id), false)
   })
 })
+
+test.group('AccountService - closeAccount', () => {
+  async function verifiedUser(users: MemoryUserStore) {
+    const user = await users.createEmailUser({
+      email: 'a@test.com',
+      password: 'secret',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+    })
+    return users.save({ ...user, emailVerifiedAt: new Date() })
+  }
+
+  test('wrong password deletes nothing and runs no step', async () => {
+    const users = new MemoryUserStore()
+    const user = await verifiedUser(users)
+    const ran: string[] = []
+    const service = new AccountService(users, undefined, defaultAccountOptions, [
+      { name: 'billing', run: async () => void ran.push('billing') },
+    ])
+    ;(service as any).emitSafe = async () => {}
+
+    await assert.rejects(
+      () => service.closeAccount(user.id, 'wrong'),
+      (err: any) => err.code === 'E_INVALID_PASSWORD'
+    )
+    assert.deepEqual(ran, [])
+    assert.ok(await users.findByEmail('a@test.com'))
+  })
+
+  test('runs the steps, deletes, and emits Account:Closed with the address', async () => {
+    const users = new MemoryUserStore()
+    const user = await verifiedUser(users)
+    const ran: number[] = []
+    const service = new AccountService(users, undefined, defaultAccountOptions, [
+      { name: 'billing', run: async (u) => void ran.push(u.id) },
+    ])
+    const emissions: Array<{ event: string; payload: any }> = []
+    ;(service as any).emitSafe = async (event: string, payload: any) => {
+      emissions.push({ event, payload })
+    }
+
+    await service.closeAccount(user.id, 'secret')
+
+    assert.deepEqual(ran, [user.id])
+    assert.equal(await users.findByEmail('a@test.com'), null)
+    assert.deepEqual(
+      emissions.map((e) => e.event),
+      ['Account:DeleteAccount', 'Account:Closed']
+    )
+    assert.deepEqual(emissions[1].payload, {
+      userId: user.id,
+      email: 'a@test.com',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+    })
+  })
+
+  test('a failing step keeps the account and throws E_ACCOUNT_CLOSURE_FAILED', async () => {
+    const users = new MemoryUserStore()
+    const user = await verifiedUser(users)
+    const service = new AccountService(users, undefined, defaultAccountOptions, [
+      {
+        name: 'billing',
+        run: async () => {
+          throw new Error('provider down')
+        },
+      },
+    ])
+    ;(service as any).emitSafe = async () => {}
+
+    await assert.rejects(
+      () => service.closeAccount(user.id, 'secret'),
+      (err: any) => err.code === 'E_ACCOUNT_CLOSURE_FAILED' && err.status === 502
+    )
+    assert.ok(await users.findByEmail('a@test.com'))
+  })
+})

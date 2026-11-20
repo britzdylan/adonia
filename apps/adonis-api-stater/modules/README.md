@@ -32,7 +32,7 @@ node packages/modules/build/cli.js add auth \
 |------|------|
 | `types/`, `constants/`, `contracts/` | Shared core (always copy with `api`) |
 | `api/` | Envelopes, `ApiService`, `ctx.respond`, exception handler |
-| `auth/`, `account/`, `notification/`, `creem/`, `subscription/` | Feature modules |
+| `auth/`, `account/`, `notification/`, `creem/`, `subscription/`, `outbound/` | Feature modules |
 
 Import path: `#modules/<name>/…` (for example `#modules/auth/service`).
 

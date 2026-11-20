@@ -10,6 +10,7 @@ import ApiException from '#modules/api/exception'
 import { exceptions } from '#constants/exceptions'
 import type { User, UserStore } from '#modules/contracts/index'
 import type {
+  AccountClosureStep,
   AvatarStorage,
   ReplaceEmailInput,
   ReplacePasswordInput,
@@ -28,7 +29,8 @@ export class AccountService extends ApiService {
   constructor(
     private users: UserStore,
     private avatars: AvatarStorage = noopAvatars,
-    private options: AccountOptions = defaultAccountOptions
+    private options: AccountOptions = defaultAccountOptions,
+    private closureSteps: AccountClosureStep[] = []
   ) {
     super()
   }
@@ -66,11 +68,7 @@ export class AccountService extends ApiService {
 
     const saved = await this.users.save(user)
 
-    if (
-      data.avatarKey !== undefined &&
-      previousAvatarKey &&
-      previousAvatarKey !== data.avatarKey
-    ) {
+    if (data.avatarKey !== undefined && previousAvatarKey && previousAvatarKey !== data.avatarKey) {
       await this.avatars.delete(previousAvatarKey)
     }
 
@@ -144,6 +142,45 @@ export class AccountService extends ApiService {
     this.emitSafe('Account:UpdateUserPassword', user)
   }
 
+  /**
+   * The user closes their own account. Checks the password, runs every
+   * closure step (for example cancelling billing), then deletes the account
+   * and emits `Account:Closed` with the address for a confirmation email.
+   *
+   * If a step fails, nothing is deleted: a user must never keep paying for
+   * an account that no longer exists. A step's ApiException is thrown as it
+   * is; any other error becomes E_ACCOUNT_CLOSURE_FAILED.
+   */
+  public async closeAccount(userId: number, password: string): Promise<void> {
+    const user = await this.users.findOrFail(userId)
+    const valid = await this.users.verifyPassword(userId, password)
+    if (!valid) {
+      throw ApiException.from(exceptions.INVALID_PASSWORD)
+    }
+
+    for (const step of this.closureSteps) {
+      try {
+        await step.run(user)
+      } catch (error) {
+        if (error instanceof ApiException) throw error
+        throw ApiException.from(exceptions.ACCOUNT_CLOSURE_FAILED, error)
+      }
+    }
+
+    await this.deleteAccount(userId)
+    this.emitSafe('Account:Closed', {
+      userId,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    })
+  }
+
+  /**
+   * Deletes the account with no password check and no closure steps. For
+   * admin and internal use; a user closing their own account goes through
+   * closeAccount.
+   */
   public async deleteAccount(userId: number): Promise<void> {
     const user = await this.users.findOrFail(userId)
     if (user.avatarKey) {

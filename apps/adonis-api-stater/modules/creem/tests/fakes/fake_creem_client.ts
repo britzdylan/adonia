@@ -18,6 +18,9 @@ export class FakeCreemClient implements CreemClient {
   checkouts: CheckoutInput[] = []
   portalCalls: string[] = []
   listCalls: Array<{ customerId: string; limit: number }> = []
+  cancelCalls: string[] = []
+  /** When set, cancelSubscription throws it. */
+  cancelError: Error | null = null
   checkoutUrl: string | null = 'https://pay.creem.io/checkout/1'
   portalUrl = 'https://portal.creem.io/1'
   invoices: CreemInvoice[] = []
@@ -33,6 +36,11 @@ export class FakeCreemClient implements CreemClient {
   async createPortalLink(customerId: string) {
     this.portalCalls.push(customerId)
     return { portalUrl: this.portalUrl }
+  }
+
+  async cancelSubscription(subscriptionId: string) {
+    this.cancelCalls.push(subscriptionId)
+    if (this.cancelError) throw this.cancelError
   }
 
   async listTransactions(customerId: string, limit: number) {

@@ -9,13 +9,19 @@ import { AccountService } from '#modules/account/service'
 import { LucidUserStore } from '#adapters/lucid_user_store'
 import { DriveAvatarStorage } from './drive_avatar_storage.ts'
 import { defaultAccountOptions, type AccountOptions } from '#modules/account/options'
-import type { AvatarStorage } from '#modules/account/contracts/index'
+import type { AccountClosureStep, AvatarStorage } from '#modules/account/contracts/index'
 
 export { DriveAvatarStorage } from './drive_avatar_storage.ts'
 
 export function createAccountService(
   avatars: AvatarStorage = new DriveAvatarStorage(),
-  options: AccountOptions = defaultAccountOptions
+  options: AccountOptions = defaultAccountOptions,
+  /**
+   * Steps that must succeed before closeAccount deletes anything. With
+   * billing installed, pass `[cancelSubscriptionsOnClose(subscriptionService)]`
+   * from `#modules/subscription/closure_step`.
+   */
+  closureSteps: AccountClosureStep[] = []
 ) {
-  return new AccountService(new LucidUserStore(), avatars, options)
+  return new AccountService(new LucidUserStore(), avatars, options, closureSteps)
 }

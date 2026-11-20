@@ -17,6 +17,15 @@ export type AppNotificationData = {
 }
 
 /**
+ * A stored in-app notification as the inbox reads it.
+ */
+export type InboxNotification = AppNotificationData & {
+  id: string
+  readAt: Date | null
+  createdAt: Date
+}
+
+/**
  * Per-type handlers. Email returns an opaque message for MailTransport;
  * app returns the row shape for AppNotificationStore.
  */
@@ -30,3 +39,10 @@ export type NotificationDefinition = {
  * Keys are free-form strings (e.g. 'verify_email', 'welcome').
  */
 export type NotificationRegistry = Record<string, NotificationDefinition>
+
+/**
+ * Notification type → the user preference that governs its email, or null
+ * when the email is always sent (account and security mail). Types left out
+ * are treated as null.
+ */
+export type EmailPreferenceMap<K extends string = string> = Partial<Record<K, string | null>>

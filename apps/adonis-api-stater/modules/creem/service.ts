@@ -63,6 +63,15 @@ export class CreemService extends ApiService {
   }
 
   /**
+   * Cancels a subscription at once. Stored state is updated by the
+   * subscription.canceled webhook that follows, not here.
+   */
+  async cancelSubscription(subscriptionId: string): Promise<void> {
+    await this.client.cancelSubscription(subscriptionId)
+    this.emitSafe('Creem:SubscriptionCanceled', { subscriptionId })
+  }
+
+  /**
    * Maps a Creem product ID to a plan string. Falls back to config.defaultPlan.
    */
   resolveProductPlan(creemProductId: string): CreemPlan {
