@@ -1,0 +1,14 @@
+{
+  "name": "chat",
+  "description": "Slack and Discord incoming-webhook messages with escaping and URL checks",
+  "files": ["message.ts", "send.ts", "module.json"],
+  "stubs": ["stubs/validators/**/*"],
+  "dependencies": {},
+  "registryDependencies": ["api", "outbound"],
+  "peerModels": [],
+  "configKeys": [],
+  "env": [],
+  "events": [],
+  "hostFacingExceptions": [],
+  "hostTests": []
+}
