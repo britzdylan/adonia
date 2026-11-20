@@ -128,6 +128,43 @@ Keep that metadata field in your `CreemClient.createCheckout`.
 Point a host route at this method. Use the raw body (not parsed
 JSON) so signature verification matches Creem.
 
+## Plans and limits
+
+`definePlans(catalog, defaultPlan)` holds your plans and their
+limits. The module does not know plan names or limit fields.
+
+```ts
+import { PlanService, definePlans } from '#modules/subscription/plans'
+
+export const plans = definePlans(
+  {
+    Free: { projects: 3, seats: 1 },
+    Pro: { projects: -1, seats: 10 },
+  },
+  'Free'
+)
+
+export const planService = new PlanService(plans, subscriptionService, creemService, {
+  onUnknownPlan: (d) => logger.warn(d, 'Subscription matches no plan'),
+})
+
+const { projects } = await planService.getLimits(user.id)
+```
+
+`PlanService.getUserPlan(userId)`:
+
+1. No subscription, or a status not in `activeStatuses`: the default plan.
+2. The Creem product id, through `CreemConfig.productPlans`. Renaming a
+   product in Creem cannot change limits.
+3. Else the stored product name: an exact match, then a word match
+   ("Acme Pro Monthly" → `Pro`). Billing words are ignored.
+4. Else the default plan, and `onUnknownPlan` is called.
+
+The result is always a key of the catalog, so `getLimits` never
+fails. `getCurrentPeriod(userId)` returns `{ start, end }` from the
+subscription, or the current UTC month. Usage counting stays in your
+app.
+
 ## Contracts you must implement
 
 Skip `--with-adapters` only when you provide a `SubscriptionStore`
