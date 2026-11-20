@@ -6,12 +6,14 @@
  * Copy Vine provider (`providers/vine_provider.ts`) and register it in
  * adonisrc.ts. Logout needs named auth middleware from start/kernel.ts.
  *
- * Sensitive routes should use authLimiter (5/min). Install @adonisjs/limiter,
- * copy stubs/start/limiter.ts, then uncomment `.use(authLimiter)` below.
+ * Sensitive routes should use authLimiter (5/min per IP); routes that email
+ * an address also use emailTargetLimiter (3 per 15 min per address).
+ * Install @adonisjs/limiter, copy stubs/start/limiter.ts, then uncomment
+ * the `.use(...)` lines below.
  */
 import router from '@adonisjs/core/services/router'
 // import { middleware } from '#start/kernel'
-// import { authLimiter } from '#start/limiter'
+// import { authLimiter, emailTargetLimiter } from '#start/limiter'
 
 const AuthController = () => import('#controllers/auth_controller')
 
@@ -25,9 +27,9 @@ router
     // .use(middleware.auth())
     router.post('activate', [AuthController, 'activate'])
     router.post('activate/request', [AuthController, 'sendAccountActivationEmail'])
-    // .use(authLimiter)
+    // .use([authLimiter, emailTargetLimiter])
     router.post('password/forgot', [AuthController, 'requestPasswordReset'])
-    // .use(authLimiter)
+    // .use([authLimiter, emailTargetLimiter])
     router.post('password/validate', [AuthController, 'validatePasswordReset'])
     router.post('password/reset', [AuthController, 'updatePassword'])
     // .use(authLimiter)
