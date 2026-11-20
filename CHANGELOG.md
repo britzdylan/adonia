@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Breaking
+
+- `CreemClient` requires `cancelSubscription(subscriptionId)` and
+  `SubscriptionStore` requires `findNotEndedByUserId(userId, endedStatuses)`.
+  Custom adapters must add them; the Lucid, creem_io and test stubs have them.
+- A validation error `message` is now `E_VALIDATION_ERROR` (or an
+  `E_VALIDATION_ERROR_*` code from a custom rule), not Vine's first field
+  message. Field messages stay in `errors`.
+- `AuthService.requestPasswordReset` no longer throws for an unknown address;
+  it does nothing. The resend-activation and forgot-password validator stubs
+  no longer have the `exists` rule.
+- The `DELETE /api/v1/account` controller stub calls `closeAccount` and needs
+  `password` in the body.
+
 ## 0.2.3 (2026-10-01)
 
 ### Fixed
