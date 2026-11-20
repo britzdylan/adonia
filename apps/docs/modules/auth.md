@@ -241,7 +241,23 @@ middleware and limiters; the service doesn't throw them today:
 | POST | `/api/v1/auth/password/reset` | `updatePassword` |
 
 Limiter calls on sensitive routes are commented out until you install
-`@adonisjs/limiter` and uncomment `.use(authLimiter)`.
+`@adonisjs/limiter` and uncomment the `.use(...)` lines.
+
+## Rate limiters
+
+`start/limiter.ts` (from `--with-routes` or `--with-stubs`) defines:
+
+| Limiter | Key | Limit | Use on |
+|---------|-----|-------|--------|
+| `authLimiter` | IP | 5 / min | Login, register, password reset |
+| `accountLimiter` | Signed-in user, else IP | 60 / min | Authenticated groups (after `middleware.auth()`) |
+| `emailTargetLimiter` | Target email address | 3 / 15 min | Routes that send an email to an address in the request |
+| `perResourceLimiter(name, param, n)` | Route parameter + IP | `n` / min | Public endpoints that take a resource id |
+
+Every limiter is off in tests (`app.inTest`). Keying by user stops
+people behind one office IP from sharing a budget. Keying by target
+address stops rotating IPs from flooding one inbox; use it together
+with `authLimiter`.
 
 ## Next steps
 

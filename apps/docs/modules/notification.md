@@ -170,6 +170,40 @@ Every store method takes the `userId`, so one user cannot read or
 mark another user's notification. Build it with `createInboxService()`
 from `#adapters/notification`.
 
+## Delivery tracking
+
+Record whether a queued email reached the mail server on your own
+record (for example "was the order email sent?"). The mail class puts
+a reference in a header, and the messenger reports to your
+`MailDeliveryTracker`:
+
+```ts
+import { DELIVERY_REF_HEADER } from '#modules/notification/delivery'
+
+export default class OrderEmail extends BaseMail {
+  prepare() {
+    this.message.header(DELIVERY_REF_HEADER, `order:${this.order.id}`)
+  }
+}
+```
+
+`--with-stubs` / `--with-routes` copies `start/mail_delivery.ts`. It
+calls `mail.setMessenger(...)` with `createTrackedMessenger`, so
+`mail.sendLater` sends in the background with 3 attempts and calls
+`tracker.sent(ref, at)` or, once after the last attempt,
+`tracker.failed(ref, error)`. Preload it in `adonisrc.ts` and replace
+its logging tracker with one that writes your records.
+
+| Export | Does |
+|--------|------|
+| `sendTracked(send, ref, tracker, options)` | Retries `send` (default 3 attempts, 1 s / 4 s backoff), then records the result. Throws the last error |
+| `createTrackedMessenger(mailer, tracker, options)` | A messenger for `mail.setMessenger` |
+| `deliveryRefFromHeaders(headers)` | The reference, or `null` |
+
+A tracker error goes to `onError` and never sends the email again.
+The stub messenger keeps mail in memory. With a job queue
+(`@adonisjs/queue`), call `sendTracked` from the job instead.
+
 ## Contracts you must implement
 
 Skip `--with-adapters` only when you provide mail and in-app
@@ -234,6 +268,17 @@ interface InboxStore {
   countUnread(userId: number): Promise<number>
   markRead(userId: number, id: string, readAt: Date): Promise<InboxNotification | null>
   markAllRead(userId: number, readAt: Date): Promise<number>
+}
+```
+
+### MailDeliveryTracker
+
+Only for delivery tracking.
+
+```ts
+interface MailDeliveryTracker {
+  sent(ref: string, sentAt: Date): Promise<void>
+  failed(ref: string, error: string): Promise<void>
 }
 ```
 

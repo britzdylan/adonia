@@ -7,7 +7,33 @@ import type {
   ApiResponse,
   ApiResult,
   PaginatedResponse,
+  PaginationParams,
 } from '#modules/types/api'
+
+/**
+ * Build a paginated success envelope with `meta`. For controllers that do
+ * not extend ApiService (it has the same helper as a method).
+ */
+export function preparePaginated<T>(
+  data: T[],
+  total: number,
+  params: PaginationParams = {},
+  message: string | null = null
+): PaginatedResponse<T> {
+  const page = params.page ?? 1
+  const pageSize = params.pageSize ?? data.length
+  return {
+    data,
+    message,
+    success: true,
+    meta: {
+      total,
+      page,
+      pageSize,
+      totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 0,
+    },
+  }
+}
 
 /**
  * Build the shared failure envelope used by ApiService and the exception handler.

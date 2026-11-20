@@ -12,7 +12,7 @@ import logger from '@adonisjs/core/services/logger'
 import config from '@adonisjs/core/services/config'
 import type { EventsList } from '@adonisjs/core/types'
 import { ModelsTypes, ApiTypes } from '#modules/types'
-import { prepareError } from '#modules/api/envelope'
+import { prepareError, preparePaginated } from '#modules/api/envelope'
 
 export default class ApiService {
   namespace: ModelsTypes.NameSpace = null
@@ -48,19 +48,7 @@ export default class ApiService {
     total: number,
     params: ApiTypes.PaginationParams = {}
   ): ApiTypes.PaginatedResponse<T> {
-    const page = params.page ?? 1
-    const pageSize = params.pageSize ?? data.length
-    return {
-      data,
-      message: null,
-      success: true,
-      meta: {
-        total,
-        page,
-        pageSize,
-        totalPages: pageSize > 0 ? Math.ceil(total / pageSize) : 0,
-      },
-    }
+    return preparePaginated(data, total, params)
   }
 
   /**

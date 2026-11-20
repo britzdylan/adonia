@@ -36,7 +36,14 @@ The domain slice lands under `modules/api/`:
 | `exception.ts` | `ApiException` carrier |
 | `exception_handler.ts` | Global JSON exception handler |
 | `provider.ts` | Registers `ctx.respond` and `ctx.serialize` |
+| `pagination.ts` | `resolvePage`, `containsPattern`, `toPageResult` |
+| `csv.ts` | `toCsv`, `csvCell`, `csvDownloadHeaders` |
+| `batch.ts` | `runBatch`, `registerScheduleSafely` |
+| `force_json_middleware.ts` | Forces JSON; `clientAcceptsHtml` |
 | `module.json` | Manifest |
+
+`--with-validators` also copies `app/validators/pagination.ts`
+(`paginationFields`).
 
 Core packages copy next to it:
 
@@ -101,8 +108,8 @@ A failure body looks like this:
 ```
 
 Vine validation failures keep the same envelope and add an `errors`
-array of field messages. The exception handler takes the first field
-message as `message`.
+array of field messages. `message` is `E_VALIDATION_ERROR`, or the
+first field message when it is already an `E_VALIDATION_ERROR_*` code.
 
 ## ApiService
 
@@ -260,6 +267,85 @@ with `defineCodes` in `app/constants/`.
 The exception handler puts `error.code` (or `error.message`) in
 `message`. Clients therefore see `E_INVALID_TOKEN`, not a localized
 sentence, unless you throw with an explicit `message` option.
+
+## Lists and search
+
+Every list endpoint should have the same bounds. Validate with the
+`paginationFields` stub, then clamp again before the query:
+
+```ts
+import vine from '@vinejs/vine'
+import { paginationFields } from '#validators/pagination'
+import { containsPattern, resolvePage, toPageResult } from '#modules/api/pagination'
+import { preparePaginated } from '#modules/api/envelope'
+
+const listValidator = vine.create(vine.object({ ...paginationFields }))
+
+const query = await request.validateUsing(listValidator)
+const { page, pageSize } = resolvePage(query) // page ≥ 1, 1 ≤ pageSize ≤ 100
+const q = Project.query().where('userId', user.id)
+if (query.search) q.whereILike('name', containsPattern(query.search))
+const { rows, total } = toPageResult(
+  await q.orderBy('createdAt', 'desc').orderBy('id', 'desc').paginate(page, pageSize)
+)
+return response.ok(preparePaginated(rows, total, { page, pageSize }))
+```
+
+| Helper | Does |
+|--------|------|
+| `resolvePage(params, bounds?)` | Integers, page at least 1, page size from 1 to `maxPageSize` (default 25 / 100) |
+| `containsPattern(term)` | Escapes `%`, `_`, `\` so the term matches as typed. SQLite needs `ESCAPE '\'` |
+| `toPageResult(paginator)` | Lucid paginator → `{ rows, total }` for a repository to return |
+| `preparePaginated(data, total, params)` | The paginated envelope, for controllers that do not extend `ApiService` |
+
+End the sort on a unique column (`id`), so rows with the same
+timestamp do not repeat or go missing between pages.
+
+## CSV export
+
+`toCsv(rows)` quotes every cell, writes objects as JSON and dates as
+ISO, and adds a UTF-8 byte order mark and CRLF line endings for
+Excel. A cell that starts with `=`, `+`, `-`, `@`, tab or carriage
+return gets a leading `'`, so a spreadsheet shows it as text and does
+not run it (CSV injection).
+
+```ts
+import { csvDownloadHeaders, toCsv } from '#modules/api/csv'
+
+for (const [name, value] of Object.entries(csvDownloadHeaders('orders.csv'))) {
+  response.header(name, value)
+}
+return response.send(toCsv([header, ...lines]))
+```
+
+## Batch jobs
+
+`runBatch(items, handler, { onError })` runs the handler for each
+item. The handler returns `'done'` or `'skipped'`. A thrown error is
+counted as `failed` and the batch continues. The result is
+`{ done, skipped, failed }`. Give the job that calls it no automatic
+retries, or a retry repeats the items that already worked.
+
+`registerScheduleSafely(name, register, onError)` registers a
+recurring schedule at boot. If it fails (for example the queue store
+is down), it calls `onError` and the app still starts. Give the
+schedule a fixed id so each boot updates one schedule.
+
+## HTML and JSON from one route
+
+`#modules/api/force_json_middleware` replaces the starter kit's
+force-JSON middleware in `start/kernel.ts`. It sets
+`Accept: application/json` so framework errors render as JSON, and it
+keeps the header the client sent. `clientAcceptsHtml(request)` is
+true when the client asked for `text/html` by name, as a browser does
+when it posts a plain HTML form. Scripts that use fetch get false.
+
+```ts
+server.use([() => import('#modules/api/force_json_middleware')])
+
+if (clientAcceptsHtml(request)) return view.render('pages/thanks')
+return response.ok(await ctx.respond({ success: true, message: null, data }))
+```
 
 ## Shared UserStore
 

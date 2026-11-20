@@ -6,14 +6,11 @@
     "events.ts",
     "options.ts",
     "closure_step.ts",
+    "plans.ts",
     "contracts/**",
     "module.json"
   ],
-  "stubs": [
-    "stubs/models/subscription.ts",
-    "stubs/migrations/*.ts",
-    "stubs/adapters/**/*"
-  ],
+  "stubs": ["stubs/models/subscription.ts", "stubs/migrations/*.ts", "stubs/adapters/**/*"],
   "dependencies": {},
   "registryDependencies": ["api", "creem"],
   "peerModels": ["#models/subscription"],

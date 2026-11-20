@@ -7,21 +7,19 @@
     "exception.ts",
     "exception_handler.ts",
     "provider.ts",
+    "pagination.ts",
+    "csv.ts",
+    "batch.ts",
+    "force_json_middleware.ts",
     "module.json"
   ],
-  "stubs": [],
+  "stubs": ["stubs/validators/**/*"],
   "dependencies": {},
-  "registryDependencies": [
-    "types",
-    "constants",
-    "contracts"
-  ],
+  "registryDependencies": ["types", "constants", "contracts"],
   "peerModels": [],
   "configKeys": [],
   "env": [],
   "events": [],
   "hostFacingExceptions": [],
-  "hostTests": [
-    "tests/integration/"
-  ]
+  "hostTests": ["tests/integration/"]
 }
