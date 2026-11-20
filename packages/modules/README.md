@@ -63,6 +63,8 @@ or add those files yourself.
 | `creem` | Creem checkout, portal, invoices, webhooks |
 | `subscription` | Subscription state synced from Creem webhooks |
 | `outbound` | Safe HTTP requests to user-supplied URLs (SSRF guard) |
+| `chat` | Slack and Discord incoming-webhook messages |
+| `sanitize` | Strips HTML from user input |
 
 `add` walks `registryDependencies`. For example,
 `adonia add subscription` installs `creem` and core first when they

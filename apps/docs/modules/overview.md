@@ -14,6 +14,8 @@ Each module is source in the host after `add`. You edit it there.
 | `creem` | Feature | Creem checkout, portal, invoices, webhooks |
 | `subscription` | Feature | Subscription state synced from Creem webhooks |
 | `outbound` | Feature | Safe HTTP requests to user-supplied URLs |
+| `chat` | Feature | Slack and Discord incoming-webhook messages |
+| `sanitize` | Feature | Strips HTML from user input |
 
 `init` copies **core**. Feature modules are separate `add`s.
 `add` walks `registryDependencies` and copies missing packages
@@ -74,6 +76,8 @@ api (+ types, constants, contracts)
  │    └── account
  ├── notification
  ├── outbound
+ │    └── chat
+ ├── sanitize
  └── creem
       └── subscription
 ```

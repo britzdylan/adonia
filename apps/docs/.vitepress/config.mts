@@ -55,6 +55,8 @@ export default defineConfig({
             { text: 'creem', link: '/modules/creem' },
             { text: 'subscription', link: '/modules/subscription' },
             { text: 'outbound', link: '/modules/outbound' },
+            { text: 'chat', link: '/modules/chat' },
+            { text: 'sanitize', link: '/modules/sanitize' },
           ],
         },
       ],
